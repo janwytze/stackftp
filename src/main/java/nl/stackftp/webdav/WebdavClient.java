@@ -91,7 +91,7 @@ public class WebdavClient {
     public boolean exists(String path)
     {
         try {
-            this.sardine.exists(this.getUrl() + path);
+            this.sardine.exists(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
             return false;
         }
@@ -108,7 +108,7 @@ public class WebdavClient {
     public List<StackFile> list(String path)
     {
         try {
-            List<DavResource> davResources = this.sardine.list(this.getUrl() + path);
+            List<DavResource> davResources = this.sardine.list(this.getUrl() + this.formatPath(path));
             List<StackFile> fileList = new ArrayList<>();
 
             // Skip first.
@@ -123,5 +123,16 @@ public class WebdavClient {
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    /**
+     * Format the path.
+     *
+     * @param path The path.
+     * @return Formatted path.
+     */
+    protected String formatPath(String path)
+    {
+        return path.replace(" ", "%20");
     }
 }
