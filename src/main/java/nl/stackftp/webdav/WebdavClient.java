@@ -114,7 +114,9 @@ public class WebdavClient {
             // Skip first.
             for (int resourceIndex = 1; resourceIndex < davResources.size(); resourceIndex++) {
                 DavResource davResource = davResources.get(resourceIndex);
-                fileList.add(new StackFile(davResource.getPath().substring(18), this.getStackUser()));
+                fileList.add(new StackFile(davResource.getPath().substring(18),
+                        this.getStackUser(),
+                        davResource.getContentLength()));
             }
 
             return fileList;

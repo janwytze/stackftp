@@ -22,6 +22,11 @@ public class StackFile implements FtpFile {
     protected String path;
 
     /**
+     * Size of the file.
+     */
+    protected Long size = 0L;
+
+    /**
      * The StackFile constructor.
      *
      * @param path The file path. Must be absolute!.
@@ -31,6 +36,19 @@ public class StackFile implements FtpFile {
     {
         this.stackUser = stackUser;
         this.path = path;
+    }
+
+    /**
+     * The StackFile constructor.
+     *
+     * @param path The file path. Must be absolute!.
+     * @param stackUser The file user.
+     * @param size The file size.
+     */
+    public StackFile(String path, StackUser stackUser, Long size)
+    {
+        this(path, stackUser);
+        this.size = size;
     }
 
     /**
@@ -158,10 +176,7 @@ public class StackFile implements FtpFile {
     }
 
     public long getSize() {
-        /*
-         * @Todo Get size from Webdav.
-         */
-        return 0;
+        return this.size;
     }
 
     public Object getPhysicalFile() {
