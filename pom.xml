@@ -81,7 +81,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>fully.qualified.MainClass</mainClass>
+							<mainClass>nl.stackftp.StackftpApplication</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
