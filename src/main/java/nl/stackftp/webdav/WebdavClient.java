@@ -111,7 +111,9 @@ public class WebdavClient {
             List<DavResource> davResources = this.sardine.list(this.getUrl() + path);
             List<StackFile> fileList = new ArrayList<>();
 
-            for (DavResource davResource: davResources) {
+            // Skip first.
+            for (int resourceIndex = 1; resourceIndex < davResources.size(); resourceIndex++) {
+                DavResource davResource = davResources.get(resourceIndex);
                 fileList.add(new StackFile(davResource.getPath().substring(18), this.getStackUser()));
             }
 
