@@ -3,10 +3,12 @@ package nl.stackftp.webdav;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
+import com.github.sardine.impl.SardineException;
 import nl.stackftp.ftp.StackFile;
 import nl.stackftp.ftp.StackUser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,13 +118,56 @@ public class WebdavClient {
                 DavResource davResource = davResources.get(resourceIndex);
                 fileList.add(new StackFile(davResource.getPath().substring(18),
                         this.getStackUser(),
-                        davResource.getContentLength()));
+                        davResource.getContentLength(),
+                        davResource.getModified().getTime()
+                        ));
             }
 
             return fileList;
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    /**
+     * Delete a file or directory.
+     *
+     * @param path The path to delete.
+     * @return True when successful.
+     */
+    public boolean delete(String path)
+    {
+        try {
+            this.sardine.delete(this.getUrl() + this.formatPath(path));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get a file from webdav.
+     *
+     * @param path The file path.
+     * @return The file input stream.
+     * @throws IOException Thrown when getting file failed.
+     */
+    public InputStream get(String path) throws IOException
+    {
+        return this.sardine.get(this.getUrl() + this.formatPath(path));
+    }
+
+    public boolean move(String fromPath, String toPath)
+    {
+        try {
+            this.sardine.move(fromPath, toPath);
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
