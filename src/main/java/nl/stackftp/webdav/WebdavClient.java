@@ -93,12 +93,10 @@ public class WebdavClient {
     public boolean exists(String path)
     {
         try {
-            this.sardine.exists(this.getUrl() + this.formatPath(path));
+            return this.sardine.exists(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -170,6 +168,23 @@ public class WebdavClient {
     {
         try {
             this.sardine.move(this.getUrl() + this.formatPath(fromPath), this.getUrl() + this.formatPath(toPath));
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Create a directory.
+     *
+     * @param path The path.
+     * @return True when successful.
+     */
+    public boolean mkdir(String path)
+    {
+        try {
+            this.sardine.createDirectory(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
             return false;
         }

@@ -22,6 +22,11 @@ public class StackFile implements FtpFile {
     protected String path;
 
     /**
+     * Does this file exists.
+     */
+    protected boolean exists;
+
+    /**
      * Size of the file.
      */
     protected Long size = 0L;
@@ -39,8 +44,11 @@ public class StackFile implements FtpFile {
      */
     public StackFile(String path, StackUser stackUser)
     {
+        WebdavClient webdavClient = stackUser.getWebdavClient();
+
         this.stackUser = stackUser;
         this.path = path;
+        this.exists = webdavClient.exists(this.path);
     }
 
     /**
@@ -126,12 +134,11 @@ public class StackFile implements FtpFile {
 
     /**
      * Does this file exists?
-     * Always true.
      *
      * @return True when exists.
      */
     public boolean doesExist() {
-        return true;
+        return this.exists;
     }
 
     /**
@@ -219,12 +226,15 @@ public class StackFile implements FtpFile {
         return null;
     }
 
+    /**
+     * Create a directory.
+     *
+     * @return True when successful.
+     */
     public boolean mkdir() {
-        System.out.print("mkdir");
-        /*
-         * @Todo create directory.
-         */
-        return false;
+        WebdavClient webdavClient = this.stackUser.getWebdavClient();
+
+        return webdavClient.mkdir(this.path);
     }
 
     /**
