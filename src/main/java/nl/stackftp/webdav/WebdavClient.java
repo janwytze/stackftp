@@ -159,10 +159,17 @@ public class WebdavClient {
         return this.sardine.get(this.getUrl() + this.formatPath(path));
     }
 
+    /**
+     * Move a file.
+     *
+     * @param fromPath From path.
+     * @param toPath To path.
+     * @return True when successful.
+     */
     public boolean move(String fromPath, String toPath)
     {
         try {
-            this.sardine.move(fromPath, toPath);
+            this.sardine.move(this.getUrl() + this.formatPath(fromPath), this.getUrl() + this.formatPath(toPath));
         } catch (IOException ex) {
             return false;
         }
