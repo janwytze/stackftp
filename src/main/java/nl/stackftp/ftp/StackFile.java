@@ -168,7 +168,7 @@ public class StackFile implements FtpFile {
      */
     public boolean isRemovable() {
         // Everything is removable except for root directory.
-        return !this.path.equals("/");
+        return this.exists && !this.path.equals("/");
     }
 
     /**
@@ -189,6 +189,11 @@ public class StackFile implements FtpFile {
         return this.stackUser.getName();
     }
 
+    /**
+     * Get the link count of this file.
+     *
+     * @return The link count.
+     */
     public int getLinkCount() {
         return 0;
     }
@@ -222,6 +227,11 @@ public class StackFile implements FtpFile {
         return this.size;
     }
 
+    /**
+     * Get the physical file.
+     *
+     * @return The physical file.
+     */
     public Object getPhysicalFile() {
         return null;
     }
@@ -278,12 +288,12 @@ public class StackFile implements FtpFile {
     /**
      * Upload a file to the server.
      *
-     * @param l Read offset.
+     * @param l Write offset.
      * @return The output stream.
-     * @throws IOException
+     * @throws IOException Thrown on upload fail.
      */
     public OutputStream createOutputStream(long l) throws IOException {
-        return null;
+        return new StackOutputStream(this);
     }
 
     /**
@@ -300,5 +310,15 @@ public class StackFile implements FtpFile {
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
         return webdavClient.get(this.path);
+    }
+
+    /**
+     * Get the user of this file.
+     *
+     * @return The user.
+     */
+    public StackUser getStackUser()
+    {
+        return this.stackUser;
     }
 }
