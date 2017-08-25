@@ -167,8 +167,8 @@ public class StackFile implements FtpFile {
      * @return True when removable.
      */
     public boolean isRemovable() {
-        // Everything is removable except for root directory.
-        return this.exists && !this.path.equals("/");
+        // All existing files are removable except for home directory.
+        return this.exists && !this.path.equals(this.stackUser.getHomeDirectory());
     }
 
     /**
