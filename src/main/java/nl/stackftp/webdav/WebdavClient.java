@@ -5,6 +5,7 @@ import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
 import nl.stackftp.ftp.StackFile;
 import nl.stackftp.ftp.StackUser;
+import org.apache.ftpserver.ftplet.FtpException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,14 +15,9 @@ import java.util.List;
 public class WebdavClient {
 
     /**
-     * The user's name.
+     * The user.
      */
-    protected String name;
-
-    /**
-     * The user's password.
-     */
-    protected String password;
+    protected StackUser stackUser;
 
     /**
      * The actual webdav client.
@@ -35,42 +31,30 @@ public class WebdavClient {
      */
     public WebdavClient(StackUser stackUser)
     {
-        this(stackUser.getName(), stackUser.getPassword());
-    }
-
-    /**
-     * The WebdavClient constructor.
-     *
-     * @param name The username.
-     * @param password The password.
-     */
-    public WebdavClient(String name, String password)
-    {
-        this.name = name;
-        this.password = password;
+        this.stackUser = stackUser;
 
         // Create client with username and password.
-        this.sardine = SardineFactory.begin(this.name, this.password);
+        this.sardine = SardineFactory.begin(this.stackUser.getName(), this.stackUser.getPassword());
     }
 
     /**
-     * Get the webdav base url.
+     * Get the Webdav base url.
      *
      * @return The url.
      */
     protected String getUrl()
     {
-        return String.format("https://%s.stackstorage.com/remote.php/webdav", this.name);
+        return String.format("https://%s/remote.php/webdav", this.stackUser.getUrl());
     }
 
     /**
      * Get the stack user.
      *
-     * @return The staack user.
+     * @return The user.
      */
     protected StackUser getStackUser()
     {
-        return new StackUser(this.name, this.password);
+        return this.stackUser;
     }
 
     /**
