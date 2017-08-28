@@ -101,7 +101,7 @@ public class WebdavClient {
                         this.getStackUser(),
                         davResource.getContentLength(),
                         davResource.getModified().getTime()
-                        ));
+                ));
             }
 
             return fileList;
