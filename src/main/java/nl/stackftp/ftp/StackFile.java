@@ -6,6 +6,7 @@ import org.apache.ftpserver.ftplet.FtpFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class StackFile implements FtpFile {
@@ -29,12 +30,12 @@ public class StackFile implements FtpFile {
     /**
      * Size of the file.
      */
-    protected Long size = 0L;
+    protected long size = 0;
 
     /**
      * The last modified date of this file.
      */
-    protected Long lastModified = 0L;
+    protected long lastModified = 0;
 
     /**
      * The StackFile constructor.
@@ -58,10 +59,12 @@ public class StackFile implements FtpFile {
      * @param stackUser The file user.
      * @param size The file size.
      */
-    public StackFile(String path, StackUser stackUser, Long size)
+    public StackFile(String path, StackUser stackUser, long size)
     {
         this(path, stackUser);
-        this.size = size;
+
+        // When the size is lower than 0 the file won't be displayed.
+        this.size = Math.max(0, size);
     }
 
     /**
@@ -72,7 +75,7 @@ public class StackFile implements FtpFile {
      * @param size The file size.
      * @param lastModified The last modified date.
      */
-    public StackFile(String path, StackUser stackUser, Long size, Long lastModified)
+    public StackFile(String path, StackUser stackUser, long size, long lastModified)
     {
         this(path, stackUser, size);
         this.lastModified = lastModified;
@@ -93,13 +96,15 @@ public class StackFile implements FtpFile {
      * @return The file name.
      */
     public String getName() {
-        String path = this.path;
-
-        if (this.isDirectory()) {
-            path = path.substring(0, path.length()-1);
+        if (this.path.equals("/")) {
+            return "";
         }
 
-        return path.substring(path.lastIndexOf("/") + 1);
+        if (path.endsWith("/")) {
+            return Paths.get(this.path.substring(0, this.path.length() - 1)).getFileName().toString();
+        }
+
+        return Paths.get(this.path).getFileName().toString();
     }
 
     /**

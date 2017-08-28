@@ -5,7 +5,6 @@ import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
 import nl.stackftp.ftp.StackFile;
 import nl.stackftp.ftp.StackUser;
-import org.apache.ftpserver.ftplet.FtpException;
 
 import java.io.IOException;
 import java.io.InputStream;
