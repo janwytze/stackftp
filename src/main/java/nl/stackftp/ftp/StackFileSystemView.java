@@ -120,6 +120,7 @@ public class StackFileSystemView implements FileSystemView {
 
     /**
      * Format a directory string.
+     * Don't execute after formatFile has been executed. This would at the working directory twice.
      *
      * @param path The path to format.
      * @return A valid directory string.
