@@ -267,7 +267,7 @@ public class StackFile implements FtpFile {
      * Move a file.
      *
      * @param ftpFile The destination file.
-     * @return True when successfull.
+     * @return True when successful.
      */
     public boolean move(FtpFile ftpFile) {
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
