@@ -3,10 +3,12 @@ package nl.stackftp.webdav;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
+import com.github.sardine.impl.SardineException;
 import nl.stackftp.ftp.StackFile;
 import nl.stackftp.ftp.StackUser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,12 +93,10 @@ public class WebdavClient {
     public boolean exists(String path)
     {
         try {
-            this.sardine.exists(this.getUrl() + this.formatPath(path));
+            return this.sardine.exists(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -116,13 +116,80 @@ public class WebdavClient {
                 DavResource davResource = davResources.get(resourceIndex);
                 fileList.add(new StackFile(davResource.getPath().substring(18),
                         this.getStackUser(),
-                        davResource.getContentLength()));
+                        davResource.getContentLength(),
+                        davResource.getModified().getTime()
+                        ));
             }
 
             return fileList;
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    /**
+     * Delete a file or directory.
+     *
+     * @param path The path to delete.
+     * @return True when successful.
+     */
+    public boolean delete(String path)
+    {
+        try {
+            this.sardine.delete(this.getUrl() + this.formatPath(path));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get a file from webdav.
+     *
+     * @param path The file path.
+     * @return The file input stream.
+     * @throws IOException Thrown when getting file failed.
+     */
+    public InputStream get(String path) throws IOException
+    {
+        return this.sardine.get(this.getUrl() + this.formatPath(path));
+    }
+
+    /**
+     * Move a file.
+     *
+     * @param fromPath From path.
+     * @param toPath To path.
+     * @return True when successful.
+     */
+    public boolean move(String fromPath, String toPath)
+    {
+        try {
+            this.sardine.move(this.getUrl() + this.formatPath(fromPath), this.getUrl() + this.formatPath(toPath));
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Create a directory.
+     *
+     * @param path The path.
+     * @return True when successful.
+     */
+    public boolean mkdir(String path)
+    {
+        try {
+            this.sardine.createDirectory(this.getUrl() + this.formatPath(path));
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

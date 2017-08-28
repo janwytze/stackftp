@@ -22,9 +22,19 @@ public class StackFile implements FtpFile {
     protected String path;
 
     /**
+     * Does this file exists.
+     */
+    protected boolean exists;
+
+    /**
      * Size of the file.
      */
     protected Long size = 0L;
+
+    /**
+     * The last modified date of this file.
+     */
+    protected Long lastModified = 0L;
 
     /**
      * The StackFile constructor.
@@ -34,14 +44,17 @@ public class StackFile implements FtpFile {
      */
     public StackFile(String path, StackUser stackUser)
     {
+        WebdavClient webdavClient = stackUser.getWebdavClient();
+
         this.stackUser = stackUser;
         this.path = path;
+        this.exists = webdavClient.exists(this.path);
     }
 
     /**
      * The StackFile constructor.
      *
-     * @param path The file path. Must be absolute!.
+     * @param path The file path. Must be absolute!
      * @param stackUser The file user.
      * @param size The file size.
      */
@@ -49,6 +62,20 @@ public class StackFile implements FtpFile {
     {
         this(path, stackUser);
         this.size = size;
+    }
+
+    /**
+     * The StackFile constructor.
+     *
+     * @param path The file path. Must be absolute!
+     * @param stackUser The file user.
+     * @param size The file size.
+     * @param lastModified The last modified date.
+     */
+    public StackFile(String path, StackUser stackUser, Long size, Long lastModified)
+    {
+        this(path, stackUser, size);
+        this.lastModified = lastModified;
     }
 
     /**
@@ -107,12 +134,11 @@ public class StackFile implements FtpFile {
 
     /**
      * Does this file exists?
-     * Always true.
      *
      * @return True when exists.
      */
     public boolean doesExist() {
-        return true;
+        return this.exists;
     }
 
     /**
@@ -167,14 +193,31 @@ public class StackFile implements FtpFile {
         return 0;
     }
 
+    /**
+     * Get the last modified date.
+     *
+     * @return The last modified date of this file.
+     */
     public long getLastModified() {
-        return 0;
+        return this.lastModified;
     }
 
+    /**
+     * Set the last modified date.
+     * Always false because it can't be changed.
+     *
+     * @param l The date.
+     * @return True when modified.
+     */
     public boolean setLastModified(long l) {
         return false;
     }
 
+    /**
+     * Get the size of this file.
+     *
+     * @return Size of this file.
+     */
     public long getSize() {
         return this.size;
     }
@@ -183,27 +226,45 @@ public class StackFile implements FtpFile {
         return null;
     }
 
+    /**
+     * Create a directory.
+     *
+     * @return True when successful.
+     */
     public boolean mkdir() {
-        /*
-         * @Todo create directory.
-         */
-        return false;
+        WebdavClient webdavClient = this.stackUser.getWebdavClient();
+
+        return webdavClient.mkdir(this.path);
     }
 
+    /**
+     * Delete this file.
+     *
+     * @return True when successful.
+     */
     public boolean delete() {
-        /*
-         * @Todo delete file.
-         */
-        return false;
+        WebdavClient webdavClient = this.stackUser.getWebdavClient();
+
+        return webdavClient.delete(this.path);
     }
 
+    /**
+     * Move a file.
+     *
+     * @param ftpFile The destination file.
+     * @return True when successfull.
+     */
     public boolean move(FtpFile ftpFile) {
-        /*
-         * @Todo move file.
-         */
-        return false;
+        WebdavClient webdavClient = this.stackUser.getWebdavClient();
+
+        return webdavClient.move(this.path, ftpFile.getAbsolutePath());
     }
 
+    /**
+     * Get list of files in this directory.
+     *
+     * @return List of files.
+     */
     public List<? extends FtpFile> listFiles() {
         if (this.isDirectory()) {
             WebdavClient webdavClient = this.stackUser.getWebdavClient();
@@ -214,11 +275,30 @@ public class StackFile implements FtpFile {
         return null;
     }
 
+    /**
+     * Upload a file to the server.
+     *
+     * @param l Read offset.
+     * @return The output stream.
+     * @throws IOException
+     */
     public OutputStream createOutputStream(long l) throws IOException {
         return null;
     }
 
+    /**
+     * Get the input stream of the file.
+     *
+     * @param l Read offset.
+     * @return The file output stream.
+     * @throws IOException Thrown when getting file failed.
+     */
     public InputStream createInputStream(long l) throws IOException {
-        return null;
+        /*
+         * @Todo Do something with l.
+         */
+        WebdavClient webdavClient = this.stackUser.getWebdavClient();
+
+        return webdavClient.get(this.path);
     }
 }
