@@ -112,6 +112,8 @@ public class StackFileSystemView implements FileSystemView {
      */
     protected String formatFile(String path)
     {
+        boolean isDirectory = path.endsWith("/");
+
         // If not an absolute path add the working directory.
         if (!path.startsWith("/")) {
             path = this.workingDirectory + path;
@@ -119,6 +121,12 @@ public class StackFileSystemView implements FileSystemView {
 
         // Remove Redundancies.
         path = Paths.get(path).normalize().toString();
+
+        // Re-add the / when the file is a directory.
+        // This is necessary to not confuse files with directories.
+        if (isDirectory && !path.endsWith("/")) {
+            path += '/';
+        }
 
         return path;
     }

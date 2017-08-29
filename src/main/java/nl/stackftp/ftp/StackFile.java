@@ -63,7 +63,7 @@ public class StackFile implements FtpFile {
     {
         this(path, stackUser);
 
-        // When the size is lower than 0 the file won't be displayed.
+        // To prevent directories not appearing set the minimum size to 0.
         this.size = Math.max(0, size);
     }
 
@@ -96,12 +96,9 @@ public class StackFile implements FtpFile {
      * @return The file name.
      */
     public String getName() {
+        // Prevent NullPointerException.
         if (this.path.equals("/")) {
             return "";
-        }
-
-        if (path.endsWith("/")) {
-            return Paths.get(this.path.substring(0, this.path.length() - 1)).getFileName().toString();
         }
 
         return Paths.get(this.path).getFileName().toString();
@@ -133,7 +130,7 @@ public class StackFile implements FtpFile {
      * @return True when file.
      */
     public boolean isFile() {
-        // If the path doesn't ends with / it is a directory.
+        // If the path doesn't ends with / it is a file.
         return !this.path.endsWith("/");
     }
 
