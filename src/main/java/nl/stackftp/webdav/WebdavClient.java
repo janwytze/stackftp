@@ -3,7 +3,6 @@ package nl.stackftp.webdav;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
-import com.github.sardine.impl.SardineException;
 import nl.stackftp.ftp.StackFile;
 import nl.stackftp.ftp.StackUser;
 
@@ -185,6 +184,24 @@ public class WebdavClient {
     {
         try {
             this.sardine.createDirectory(this.getUrl() + this.formatPath(path));
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Upload a file by byte array.
+     *
+     * @param path The file name.
+     * @param bytes The file to upload.
+     * @return True when successful.
+     */
+    public boolean put(String path, byte[] bytes)
+    {
+        try {
+            this.sardine.put(this.getUrl() + this.formatPath(path), bytes);
         } catch (IOException ex) {
             return false;
         }
