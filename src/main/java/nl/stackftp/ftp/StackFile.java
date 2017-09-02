@@ -288,7 +288,7 @@ public class StackFile implements FtpFile {
     }
 
     /**
-     * Upload a file to the server.
+     * Upload a file to the Webdav server.
      *
      * @param l Write offset.
      * @return The output stream.
@@ -299,7 +299,7 @@ public class StackFile implements FtpFile {
     }
 
     /**
-     * Get the input stream of the file.
+     * Download a file from the Webdav server.
      *
      * @param l Read offset.
      * @return The file output stream.
