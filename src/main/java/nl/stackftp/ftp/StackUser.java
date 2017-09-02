@@ -1,12 +1,7 @@
 package nl.stackftp.ftp;
 
-import com.github.sardine.Sardine;
-import com.github.sardine.SardineFactory;
 import nl.stackftp.webdav.WebdavClient;
-import org.apache.ftpserver.ftplet.Authority;
-import org.apache.ftpserver.ftplet.AuthorizationRequest;
-import org.apache.ftpserver.ftplet.FileSystemView;
-import org.apache.ftpserver.ftplet.User;
+import org.apache.ftpserver.ftplet.*;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
@@ -21,6 +16,11 @@ public class StackUser implements User {
     protected int maxIdleTime;
 
     /**
+     * The Webdav url.
+     */
+    protected String url;
+
+    /**
      * The user name.
      */
     protected String name;
@@ -29,6 +29,42 @@ public class StackUser implements User {
      * The user password.
      */
     protected String password;
+
+    /**
+     * The user's Webdav client.
+     */
+    protected WebdavClient webdavClient;
+
+    /**
+     * The StackUser constructor.
+     *
+     * @param name The user name. Also contains url.
+     * @param password The user's password.
+     * @throws FtpException Thrown when the name isn't valid.
+     */
+    public StackUser(String name, String password) throws FtpException
+    {
+        if (!this.checkName(name)) {
+            throw new FtpException("Name not correct");
+        }
+
+        int separatorIndex = name.lastIndexOf('@');
+
+        this.name = name.substring(0, separatorIndex);
+        this.url = name.substring((separatorIndex + 1), name.length());
+        this.password = password;
+        this.webdavClient = new WebdavClient(this);
+    }
+
+    /**
+     * Get the user's Webdav url.
+     *
+     * @return The user's Webdav url.
+     */
+    public String getUrl()
+    {
+        return this.url;
+    }
 
     /**
      * Get the user's name.
@@ -48,18 +84,6 @@ public class StackUser implements User {
     public String getPassword()
     {
         return this.password;
-    }
-
-    /**
-     * The StackUser constructor.
-     *
-     * @param name The user's name.
-     * @param password The user's password.
-     */
-    public StackUser(String name, String password)
-    {
-        this.name = name;
-        this.password = password;
     }
 
     /**
@@ -142,6 +166,22 @@ public class StackUser implements User {
      */
     public WebdavClient getWebdavClient()
     {
-        return new WebdavClient(this.name, this.password);
+        return this.webdavClient;
+    }
+
+    /**
+     * Check if a login name is correct.
+     * The name is correct when it contains an @ with an username before and an url after.
+     *
+     * @param name The login name.
+     * @return True when valid.
+     */
+    protected boolean checkName(String name)
+    {
+        int separatorIndex = name.lastIndexOf('@');
+
+        return separatorIndex != -1 // It must contain the separator character.
+                && separatorIndex != 0 // The separator character can't be the first character.
+                && separatorIndex != (name.length() - 1); // The separator character can't be the last character.
     }
 }

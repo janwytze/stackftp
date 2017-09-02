@@ -70,18 +70,24 @@ public class StackUserManager implements UserManager {
      */
     public User authenticate(Authentication authentication) throws AuthenticationFailedException
     {
+        StackUser user;
+
         // Cast the object so the username and password are readable.
         UsernamePasswordAuthentication userAuthentication = (UsernamePasswordAuthentication) authentication;
 
-        WebdavClient webdavClient = new WebdavClient(
-                userAuthentication.getUsername(),
-                userAuthentication.getPassword());
-
-        if (webdavClient.authenticate()) {
-            return new StackUser(userAuthentication.getUsername(), userAuthentication.getPassword());
+        try {
+            user = new StackUser(userAuthentication.getUsername(), userAuthentication.getPassword());
+        } catch (FtpException ex) {
+            throw new AuthenticationFailedException("Login name not correct");
         }
 
-        throw new AuthenticationFailedException("Username or password wrong");
+        WebdavClient webdavClient = user.getWebdavClient();
+
+        if (!webdavClient.authenticate()) {
+            throw new AuthenticationFailedException("Username or password wrong");
+        }
+
+        return user;
     }
 
     /**
@@ -94,6 +100,13 @@ public class StackUserManager implements UserManager {
         throw new FtpException("No server admin");
     }
 
+    /**
+     * Check if an user is admin.
+     *
+     * @param name The user name.
+     * @return True when admin.
+     * @throws FtpException Thrown on error.
+     */
     public boolean isAdmin(String name) throws FtpException
     {
         return false;
