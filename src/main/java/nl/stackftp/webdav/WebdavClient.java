@@ -120,7 +120,6 @@ public class WebdavClient {
         try {
             this.sardine.delete(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
-            ex.printStackTrace();
             return false;
         }
 

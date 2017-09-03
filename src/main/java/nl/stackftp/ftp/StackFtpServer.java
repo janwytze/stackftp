@@ -11,9 +11,15 @@ import org.springframework.stereotype.Service;
 public class StackFtpServer {
 
     /**
+     * The ftp address.
+     */
+    @Value("${ftp.address}")
+    private String serverAddress = "127.0.0.1";
+
+    /**
      * The ftp port.
      */
-    //@Value("${ftp.port}")
+    @Value("${ftp.port}")
     private int port = 2221;
 
     /**
@@ -33,6 +39,7 @@ public class StackFtpServer {
         FtpServerFactory serverFactory = new FtpServerFactory();
         ListenerFactory listenerFactory = new ListenerFactory();
 
+        listenerFactory.setServerAddress(this.serverAddress);
         listenerFactory.setPort(this.port);
         serverFactory.addListener("default", listenerFactory.createListener());
 
