@@ -314,9 +314,6 @@ public class StackFile implements FtpFile {
      * @throws IOException Thrown when getting file failed.
      */
     public InputStream createInputStream(long l) throws IOException {
-        /*
-         * @Todo Do something with l.
-         */
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
         return webdavClient.get(this.path);
