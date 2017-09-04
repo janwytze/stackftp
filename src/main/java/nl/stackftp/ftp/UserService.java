@@ -32,6 +32,10 @@ public class UserService {
      */
     public StackUser authenticate(String username, String password) throws FtpException
     {
+        if (!this.checkName(username)) {
+            throw new FtpException("Name not correct");
+        }
+
         // This string contains the username and password so it works easily with a Map.
         String credentialsString = String.format("%s:%s", username, password);
 
@@ -66,5 +70,21 @@ public class UserService {
         if (!stackUser.getWebdavClient().authenticate()) {
             throw new FtpException("Username or password wrong");
         }
+    }
+
+    /**
+     * Check if a login name is correct.
+     * The name is correct when it contains an @ with an username before and an url after.
+     *
+     * @param name The login name.
+     * @return True when valid.
+     */
+    protected boolean checkName(String name)
+    {
+        int separatorIndex = name.lastIndexOf('@');
+
+        return separatorIndex != -1 // It must contain the separator character.
+                && separatorIndex != 0 // The separator character can't be the first character.
+                && separatorIndex != (name.length() - 1); // The separator character can't be the last character.
     }
 }
