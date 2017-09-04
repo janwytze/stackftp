@@ -195,7 +195,7 @@ public class StackFile implements FtpFile {
      * @return The link count.
      */
     public int getLinkCount() {
-        return 0;
+        return this.isDirectory() ? 3 : 1;
     }
 
     /**
