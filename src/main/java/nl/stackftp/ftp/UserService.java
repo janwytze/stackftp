@@ -1,6 +1,8 @@
 package nl.stackftp.ftp;
 
 import org.apache.ftpserver.ftplet.FtpException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -8,6 +10,12 @@ import java.util.Map;
 
 @Service
 public class UserService {
+
+    /**
+     * The application context.
+     */
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     /**
      * A Map with all users that have connected while the application is running.
@@ -35,7 +43,8 @@ public class UserService {
             stackUser = this.userList.get(credentialsString);
         } else {
             // Create an user when it isn't found and add it to the userList.
-            stackUser = new StackUser(username, password);
+            //stackUser = new StackUser(username, password);
+            stackUser = this.applicationContext.getBean(StackUser.class, username, password);
             this.userList.put(credentialsString, stackUser);
         }
 
