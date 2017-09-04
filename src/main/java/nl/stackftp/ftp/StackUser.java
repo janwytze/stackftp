@@ -147,7 +147,8 @@ public class StackUser implements User {
 
     /**
      * Get the FileSystemView of this user.
-     * @return
+     *
+     * @return The FileSystemView of this user.
      */
     public FileSystemView getFileSystemView()
     {
