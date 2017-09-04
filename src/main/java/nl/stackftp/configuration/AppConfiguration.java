@@ -19,10 +19,9 @@ public class AppConfiguration {
      * @return A StackUserManager bean.
      */
     @Bean
-    @Autowired
-    public StackUserManager stackUserManager(UserService userService)
+    public StackUserManager stackUserManager()
     {
-        return new StackUserManager(userService);
+        return new StackUserManager();
     }
 
     /**

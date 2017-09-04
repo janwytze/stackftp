@@ -9,18 +9,8 @@ public class StackUserManager implements UserManager {
     /**
      * The user service.
      */
-    protected UserService userService;
-
-    /**
-     * The constructor.
-     *
-     * @param userService UserService to inject.
-     */
     @Autowired
-    public StackUserManager(UserService userService)
-    {
-        this.userService = userService;
-    }
+    protected UserService userService;
 
     /**
      * Get an user by name.
