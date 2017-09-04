@@ -77,7 +77,7 @@ public class StackUserManager implements UserManager {
             UsernamePasswordAuthentication userAuthentication = (UsernamePasswordAuthentication) authentication;
             user = new StackUser(userAuthentication.getUsername(), userAuthentication.getPassword());
         } catch (ClassCastException ex) {
-            throw new AuthenticationFailedException("Please provide an username and password");
+            throw new AuthenticationFailedException("Please provide a username and password");
         } catch (FtpException ex) {
             throw new AuthenticationFailedException("Login name not correct");
         }
