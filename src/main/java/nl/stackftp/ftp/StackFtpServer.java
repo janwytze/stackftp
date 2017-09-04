@@ -4,37 +4,41 @@ import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.listener.ListenerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component
 public class StackFtpServer {
 
     /**
+     * The application context.
+     */
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    /**
      * The ftp address.
      */
     @Value("${ftp.address}")
-    private String serverAddress = "127.0.0.1";
+    private String serverAddress;
 
     /**
      * The ftp port.
      */
     @Value("${ftp.port}")
-    private int port = 2221;
+    private int port;
 
     /**
-     * The ftp server.
-     */
-    private FtpServer ftpServer;
-
-    /**
-     * The ftp server constructor.
-     * Server will be started here.
-     * Because this is a service the server will start at application start.
+     * Start the ftp server.
      *
      * @throws FtpException Thrown when server can't start.
      */
-    public StackFtpServer() throws FtpException
+    @PostConstruct
+    public void init() throws FtpException
     {
         FtpServerFactory serverFactory = new FtpServerFactory();
         ListenerFactory listenerFactory = new ListenerFactory();
@@ -43,11 +47,11 @@ public class StackFtpServer {
         listenerFactory.setPort(this.port);
         serverFactory.addListener("default", listenerFactory.createListener());
 
-        serverFactory.setUserManager(new StackUserManager());
-        serverFactory.setFileSystem(new StackFileSystemFactory());
+        serverFactory.setUserManager(applicationContext.getBean(StackUserManager.class));
+        serverFactory.setFileSystem(applicationContext.getBean(StackFileSystemFactory.class));
 
-        this.ftpServer = serverFactory.createServer();
+        FtpServer ftpServer = serverFactory.createServer();
 
-        this.ftpServer.start();
+        ftpServer.start();
     }
 }
