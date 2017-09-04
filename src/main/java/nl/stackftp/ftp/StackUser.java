@@ -12,7 +12,7 @@ public class StackUser implements User {
     /**
      * The maximum idle time of this user.
      */
-    @Value("${ftp.idleTime}")
+    @Value("#{environment.FTP_IDLE_TIME}")
     protected int maxIdleTime;
 
     /**
