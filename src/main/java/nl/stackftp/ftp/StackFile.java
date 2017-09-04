@@ -38,7 +38,7 @@ public class StackFile implements FtpFile {
     /**
      * The StackFile constructor.
      *
-     * @param path The file path. Must be absolute!.
+     * @param path The file path. Must be absolute!
      * @param stackUser The file user.
      */
     public StackFile(String path, StackUser stackUser)

@@ -1,10 +1,16 @@
 package nl.stackftp.ftp;
 
-import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.*;
 import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class StackUserManager implements UserManager {
+
+    /**
+     * The user service.
+     */
+    @Autowired
+    protected UserService userService;
 
     /**
      * Get an user by name.
@@ -75,17 +81,11 @@ public class StackUserManager implements UserManager {
         try {
             // Cast the object so the username and password are readable.
             UsernamePasswordAuthentication userAuthentication = (UsernamePasswordAuthentication) authentication;
-            user = new StackUser(userAuthentication.getUsername(), userAuthentication.getPassword());
+            user = this.userService.authenticate(userAuthentication.getUsername(), userAuthentication.getPassword());
         } catch (ClassCastException ex) {
             throw new AuthenticationFailedException("Please provide a username and password");
         } catch (FtpException ex) {
-            throw new AuthenticationFailedException("Login name not correct");
-        }
-
-        WebdavClient webdavClient = user.getWebdavClient();
-
-        if (!webdavClient.authenticate()) {
-            throw new AuthenticationFailedException("Username or password wrong");
+            throw new AuthenticationFailedException(ex.getMessage());
         }
 
         return user;
