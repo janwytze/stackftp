@@ -40,9 +40,8 @@ public class StackUser implements User {
      *
      * @param name The user name. Also contains url.
      * @param password The user's password.
-     * @throws FtpException Thrown when the name isn't valid.
      */
-    public StackUser(String name, String password) throws FtpException
+    public StackUser(String name, String password)
     {
         int separatorIndex = name.lastIndexOf('@');
 

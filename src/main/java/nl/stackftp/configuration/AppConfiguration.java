@@ -36,9 +36,16 @@ public class AppConfiguration {
         return new StackFileSystemFactory();
     }
 
+    /**
+     * Create a spring managed instance of StackUser.
+     *
+     * @param username The username.
+     * @param password The user password.
+     * @return A StackUser object.
+     */
     @Bean
     @Scope("prototype")
-    public StackUser stackUser(String username, String password) throws FtpException
+    public StackUser stackUser(String username, String password)
     {
         return new StackUser(username, password);
     }
