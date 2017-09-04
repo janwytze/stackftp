@@ -88,11 +88,12 @@ public class StackUserManager implements UserManager {
     {
         StackUser user;
 
-        // Cast the object so the username and password are readable.
-        UsernamePasswordAuthentication userAuthentication = (UsernamePasswordAuthentication) authentication;
-
         try {
+            // Cast the object so the username and password are readable.
+            UsernamePasswordAuthentication userAuthentication = (UsernamePasswordAuthentication) authentication;
             user = this.userService.authenticate(userAuthentication.getUsername(), userAuthentication.getPassword());
+        } catch (ClassCastException ex) {
+            throw new AuthenticationFailedException("Please provide a username and password");
         } catch (FtpException ex) {
             throw new AuthenticationFailedException(ex.getMessage());
         }

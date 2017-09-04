@@ -8,6 +8,7 @@ import nl.stackftp.ftp.StackUser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,13 +178,13 @@ public class WebdavClient {
      * Upload a file by byte array.
      *
      * @param path The file name.
-     * @param bytes The file to upload.
+     * @param inputStream The file to upload.
      * @return True when successful.
      */
-    public boolean put(String path, byte[] bytes)
+    public boolean put(String path, PipedInputStream inputStream)
     {
         try {
-            this.sardine.put(this.getUrl() + this.formatPath(path), bytes);
+            this.sardine.put(this.getUrl() + this.formatPath(path), inputStream);
         } catch (IOException ex) {
             return false;
         }
