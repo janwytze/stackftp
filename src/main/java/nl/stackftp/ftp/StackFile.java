@@ -3,9 +3,7 @@ package nl.stackftp.ftp;
 import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.FtpFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -295,7 +293,17 @@ public class StackFile implements FtpFile {
      * @throws IOException Thrown on upload fail.
      */
     public OutputStream createOutputStream(long l) throws IOException {
-        return new StackOutputStream(this);
+        PipedOutputStream outputStream = new PipedOutputStream();
+        PipedInputStream inputStream = new PipedInputStream(outputStream);
+
+        // Do the HTTP call in a thread so the application can read and write asynchronously.
+        new Thread(() -> {
+                WebdavClient webdavClient = stackUser.getWebdavClient();
+
+                webdavClient.put(path, inputStream);
+        }).start();
+
+        return outputStream;
     }
 
     /**
