@@ -5,6 +5,8 @@ import org.apache.ftpserver.ftplet.FileSystemView;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.FtpFile;
 
+import java.nio.file.Paths;
+
 public class StackFileSystemView implements FileSystemView {
 
     /**
@@ -110,17 +112,28 @@ public class StackFileSystemView implements FileSystemView {
      */
     protected String formatFile(String path)
     {
-        if (path.startsWith("./")) {
-            path = this.workingDirectory + path.substring(2);
+        boolean isDirectory = path.endsWith("/");
+
+        // If not an absolute path add the working directory.
+        if (!path.startsWith("/")) {
+            path = this.workingDirectory + path;
         }
-        /*
-         * @Todo when startswith ./ format to absolute path.
-         */
+
+        // Remove Redundancies.
+        path = Paths.get(path).normalize().toString();
+
+        // Re-add the / when the file is a directory.
+        // This is necessary to not confuse files with directories.
+        if (isDirectory && !path.endsWith("/")) {
+            path += '/';
+        }
+
         return path;
     }
 
     /**
      * Format a directory string.
+     * Don't execute after formatFile has been executed. This would at the working directory twice.
      *
      * @param path The path to format.
      * @return A valid directory string.

@@ -1,10 +1,16 @@
 package nl.stackftp.ftp;
 
-import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.*;
 import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class StackUserManager implements UserManager {
+
+    /**
+     * The user service.
+     */
+    @Autowired
+    protected UserService userService;
 
     /**
      * Get an user by name.
@@ -70,18 +76,19 @@ public class StackUserManager implements UserManager {
      */
     public User authenticate(Authentication authentication) throws AuthenticationFailedException
     {
-        // Cast the object so the username and password are readable.
-        UsernamePasswordAuthentication userAuthentication = (UsernamePasswordAuthentication) authentication;
+        StackUser user;
 
-        WebdavClient webdavClient = new WebdavClient(
-                userAuthentication.getUsername(),
-                userAuthentication.getPassword());
-
-        if (webdavClient.authenticate()) {
-            return new StackUser(userAuthentication.getUsername(), userAuthentication.getPassword());
+        try {
+            // Cast the object so the username and password are readable.
+            UsernamePasswordAuthentication userAuthentication = (UsernamePasswordAuthentication) authentication;
+            user = this.userService.authenticate(userAuthentication.getUsername(), userAuthentication.getPassword());
+        } catch (ClassCastException ex) {
+            throw new AuthenticationFailedException("Please provide a username and password");
+        } catch (FtpException ex) {
+            throw new AuthenticationFailedException(ex.getMessage());
         }
 
-        throw new AuthenticationFailedException("Username or password wrong");
+        return user;
     }
 
     /**
@@ -94,6 +101,13 @@ public class StackUserManager implements UserManager {
         throw new FtpException("No server admin");
     }
 
+    /**
+     * Check if an user is admin.
+     *
+     * @param name The user name.
+     * @return True when admin.
+     * @throws FtpException Thrown on error.
+     */
     public boolean isAdmin(String name) throws FtpException
     {
         return false;

@@ -3,9 +3,8 @@ package nl.stackftp.ftp;
 import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.FtpFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class StackFile implements FtpFile {
@@ -29,17 +28,17 @@ public class StackFile implements FtpFile {
     /**
      * Size of the file.
      */
-    protected Long size = 0L;
+    protected long size = 0;
 
     /**
      * The last modified date of this file.
      */
-    protected Long lastModified = 0L;
+    protected long lastModified = 0;
 
     /**
      * The StackFile constructor.
      *
-     * @param path The file path. Must be absolute!.
+     * @param path The file path. Must be absolute!
      * @param stackUser The file user.
      */
     public StackFile(String path, StackUser stackUser)
@@ -58,10 +57,12 @@ public class StackFile implements FtpFile {
      * @param stackUser The file user.
      * @param size The file size.
      */
-    public StackFile(String path, StackUser stackUser, Long size)
+    public StackFile(String path, StackUser stackUser, long size)
     {
         this(path, stackUser);
-        this.size = size;
+
+        // To prevent directories not appearing set the minimum size to 0.
+        this.size = Math.max(0, size);
     }
 
     /**
@@ -72,7 +73,7 @@ public class StackFile implements FtpFile {
      * @param size The file size.
      * @param lastModified The last modified date.
      */
-    public StackFile(String path, StackUser stackUser, Long size, Long lastModified)
+    public StackFile(String path, StackUser stackUser, long size, long lastModified)
     {
         this(path, stackUser, size);
         this.lastModified = lastModified;
@@ -93,13 +94,12 @@ public class StackFile implements FtpFile {
      * @return The file name.
      */
     public String getName() {
-        String path = this.path;
-
-        if (this.isDirectory()) {
-            path = path.substring(0, path.length()-1);
+        // Prevent NullPointerException.
+        if (this.path.equals("/")) {
+            return "";
         }
 
-        return path.substring(path.lastIndexOf("/") + 1);
+        return Paths.get(this.path).getFileName().toString();
     }
 
     /**
@@ -128,7 +128,7 @@ public class StackFile implements FtpFile {
      * @return True when file.
      */
     public boolean isFile() {
-        // If the path doesn't ends with / it is a directory.
+        // If the path doesn't ends with / it is a file.
         return !this.path.endsWith("/");
     }
 
@@ -167,8 +167,8 @@ public class StackFile implements FtpFile {
      * @return True when removable.
      */
     public boolean isRemovable() {
-        // Everything is removable except for root directory.
-        return !this.path.equals("/");
+        // All existing files are removable except for home directory.
+        return this.exists && !this.path.equals(this.stackUser.getHomeDirectory());
     }
 
     /**
@@ -189,6 +189,11 @@ public class StackFile implements FtpFile {
         return this.stackUser.getName();
     }
 
+    /**
+     * Get the link count of this file.
+     *
+     * @return The link count.
+     */
     public int getLinkCount() {
         return 0;
     }
@@ -222,6 +227,11 @@ public class StackFile implements FtpFile {
         return this.size;
     }
 
+    /**
+     * Get the physical file.
+     *
+     * @return The physical file.
+     */
     public Object getPhysicalFile() {
         return null;
     }
@@ -252,7 +262,7 @@ public class StackFile implements FtpFile {
      * Move a file.
      *
      * @param ftpFile The destination file.
-     * @return True when successfull.
+     * @return True when successful.
      */
     public boolean move(FtpFile ftpFile) {
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
@@ -276,18 +286,28 @@ public class StackFile implements FtpFile {
     }
 
     /**
-     * Upload a file to the server.
+     * Upload a file to the Webdav server.
      *
-     * @param l Read offset.
+     * @param l Write offset.
      * @return The output stream.
-     * @throws IOException
+     * @throws IOException Thrown on upload fail.
      */
     public OutputStream createOutputStream(long l) throws IOException {
-        return null;
+        PipedOutputStream outputStream = new PipedOutputStream();
+        PipedInputStream inputStream = new PipedInputStream(outputStream);
+
+        // Do the HTTP call in a thread so the application can read and write asynchronously.
+        new Thread(() -> {
+                WebdavClient webdavClient = stackUser.getWebdavClient();
+
+                webdavClient.put(path, inputStream);
+        }).start();
+
+        return outputStream;
     }
 
     /**
-     * Get the input stream of the file.
+     * Download a file from the Webdav server.
      *
      * @param l Read offset.
      * @return The file output stream.
@@ -300,5 +320,15 @@ public class StackFile implements FtpFile {
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
         return webdavClient.get(this.path);
+    }
+
+    /**
+     * Get the user of this file.
+     *
+     * @return The user.
+     */
+    public StackUser getStackUser()
+    {
+        return this.stackUser;
     }
 }

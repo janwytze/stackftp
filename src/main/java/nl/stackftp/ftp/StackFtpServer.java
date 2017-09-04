@@ -6,19 +6,22 @@ import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.ssl.SslConfiguration;
 import org.apache.ftpserver.ssl.SslConfigurationFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 
-@Service
+@Component
 public class StackFtpServer {
 
     /**
-     * The ftp port.
+     * The application context.
      */
-    @Value("${ftp.port}")
-    private int port;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * Is ssl enabled.
@@ -39,20 +42,25 @@ public class StackFtpServer {
     private String sslKeystorePassword;
 
     /**
-     * The ftp server.
+     * The ftp address.
      */
-    private FtpServer ftpServer;
+    @Value("${ftp.address}")
+    private String serverAddress;
 
     /**
-     * The ftp server constructor.
-     * Server will be started here.
-     * Because this is a service the server will start at application start.
+     * The ftp port.
+     */
+    @Value("${ftp.port}")
+    private int port;
+
+    /**
+     * Start the ftp server.
      *
      * @throws FtpException Thrown when server can't start.
      */
-    public StackFtpServer() throws FtpException
+    @PostConstruct
+    public void init() throws FtpException
     {
-        System.out.println(this.port);
         FtpServerFactory serverFactory = new FtpServerFactory();
         ListenerFactory listenerFactory = new ListenerFactory();
 
@@ -62,15 +70,16 @@ public class StackFtpServer {
             listenerFactory.setImplicitSsl(true);
         }
 
+        listenerFactory.setServerAddress(this.serverAddress);
         listenerFactory.setPort(this.port);
         serverFactory.addListener("default", listenerFactory.createListener());
 
-        serverFactory.setUserManager(new StackUserManager());
-        serverFactory.setFileSystem(new StackFileSystemFactory());
+        serverFactory.setUserManager(this.applicationContext.getBean(StackUserManager.class));
+        serverFactory.setFileSystem(this.applicationContext.getBean(StackFileSystemFactory.class));
 
-        this.ftpServer = serverFactory.createServer();
+        FtpServer ftpServer = serverFactory.createServer();
 
-        this.ftpServer.start();
+        ftpServer.start();
     }
 
     /**

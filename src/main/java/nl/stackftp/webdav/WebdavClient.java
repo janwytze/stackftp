@@ -3,26 +3,21 @@ package nl.stackftp.webdav;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
-import com.github.sardine.impl.SardineException;
 import nl.stackftp.ftp.StackFile;
 import nl.stackftp.ftp.StackUser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PipedInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class WebdavClient {
 
     /**
-     * The user's name.
+     * The user.
      */
-    protected String name;
-
-    /**
-     * The user's password.
-     */
-    protected String password;
+    protected StackUser stackUser;
 
     /**
      * The actual webdav client.
@@ -36,42 +31,30 @@ public class WebdavClient {
      */
     public WebdavClient(StackUser stackUser)
     {
-        this(stackUser.getName(), stackUser.getPassword());
-    }
-
-    /**
-     * The WebdavClient constructor.
-     *
-     * @param name The username.
-     * @param password The password.
-     */
-    public WebdavClient(String name, String password)
-    {
-        this.name = name;
-        this.password = password;
+        this.stackUser = stackUser;
 
         // Create client with username and password.
-        this.sardine = SardineFactory.begin(this.name, this.password);
+        this.sardine = SardineFactory.begin(this.stackUser.getName(), this.stackUser.getPassword());
     }
 
     /**
-     * Get the webdav base url.
+     * Get the Webdav base url.
      *
      * @return The url.
      */
     protected String getUrl()
     {
-        return String.format("https://%s.stackstorage.com/remote.php/webdav", this.name);
+        return String.format("https://%s/remote.php/webdav", this.stackUser.getUrl());
     }
 
     /**
      * Get the stack user.
      *
-     * @return The staack user.
+     * @return The user.
      */
     protected StackUser getStackUser()
     {
-        return new StackUser(this.name, this.password);
+        return this.stackUser;
     }
 
     /**
@@ -118,7 +101,7 @@ public class WebdavClient {
                         this.getStackUser(),
                         davResource.getContentLength(),
                         davResource.getModified().getTime()
-                        ));
+                ));
             }
 
             return fileList;
@@ -138,7 +121,6 @@ public class WebdavClient {
         try {
             this.sardine.delete(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
-            ex.printStackTrace();
             return false;
         }
 
@@ -185,6 +167,24 @@ public class WebdavClient {
     {
         try {
             this.sardine.createDirectory(this.getUrl() + this.formatPath(path));
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Upload a file by byte array.
+     *
+     * @param path The file name.
+     * @param inputStream The file to upload.
+     * @return True when successful.
+     */
+    public boolean put(String path, PipedInputStream inputStream)
+    {
+        try {
+            this.sardine.put(this.getUrl() + this.formatPath(path), inputStream);
         } catch (IOException ex) {
             return false;
         }
