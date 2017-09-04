@@ -4,12 +4,15 @@ import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.listener.ListenerFactory;
+import org.apache.ftpserver.ssl.SslConfiguration;
+import org.apache.ftpserver.ssl.SslConfigurationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 
 @Component
 public class StackFtpServer {
@@ -19,6 +22,24 @@ public class StackFtpServer {
      */
     @Autowired
     private ApplicationContext applicationContext;
+
+    /**
+     * Is ssl enabled.
+     */
+    @Value("${ftp.ssl}")
+    private boolean enableSsl = false;
+
+    /**
+     * The ftp ssl keystore file.
+     */
+    @Value("${ftp.ssl.keystore}")
+    private String sslKeystore;
+
+    /**
+     * The ftp ssl keystore password.
+     */
+    @Value("${ftp.ssl.keystore.password}")
+    private String sslKeystorePassword;
 
     /**
      * The ftp address.
@@ -43,15 +64,35 @@ public class StackFtpServer {
         FtpServerFactory serverFactory = new FtpServerFactory();
         ListenerFactory listenerFactory = new ListenerFactory();
 
+        // Enable ssl when configured.
+        if (this.enableSsl) {
+            listenerFactory.setSslConfiguration(this.getSslConfiguration());
+            listenerFactory.setImplicitSsl(true);
+        }
+
         listenerFactory.setServerAddress(this.serverAddress);
         listenerFactory.setPort(this.port);
         serverFactory.addListener("default", listenerFactory.createListener());
 
-        serverFactory.setUserManager(applicationContext.getBean(StackUserManager.class));
-        serverFactory.setFileSystem(applicationContext.getBean(StackFileSystemFactory.class));
+        serverFactory.setUserManager(this.applicationContext.getBean(StackUserManager.class));
+        serverFactory.setFileSystem(this.applicationContext.getBean(StackFileSystemFactory.class));
 
         FtpServer ftpServer = serverFactory.createServer();
 
         ftpServer.start();
+    }
+
+    /**
+     * Load the SslConfiguration for the application properties.
+     *
+     * @return The SslConfiguration
+     */
+    protected SslConfiguration getSslConfiguration()
+    {
+        SslConfigurationFactory sslConfigurationFactory = new SslConfigurationFactory();
+        sslConfigurationFactory.setKeystoreFile(new File(this.sslKeystore));
+        sslConfigurationFactory.setKeystorePassword(this.sslKeystorePassword);
+
+        return sslConfigurationFactory.createSslConfiguration();
     }
 }
