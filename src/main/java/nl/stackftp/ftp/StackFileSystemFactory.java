@@ -4,6 +4,7 @@ import org.apache.ftpserver.ftplet.FileSystemFactory;
 import org.apache.ftpserver.ftplet.FileSystemView;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.User;
+import org.springframework.stereotype.Component;
 
 public class StackFileSystemFactory implements FileSystemFactory{
 
