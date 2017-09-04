@@ -26,31 +26,31 @@ public class StackFtpServer {
     /**
      * Is ssl enabled.
      */
-    @Value("${ftp.ssl}")
-    private boolean enableSsl = false;
+    @Value("#{environment.FTP_SSL?:false}")
+    private boolean enableSsl;
 
     /**
      * The ftp ssl keystore file.
      */
-    @Value("${ftp.ssl.keystore}")
+    @Value("#{environment.FTP_KEYSTORE}")
     private String sslKeystore;
 
     /**
      * The ftp ssl keystore password.
      */
-    @Value("${ftp.ssl.keystore.password}")
+    @Value("#{environment.FTP_KEYSTORE_PASSWORD}")
     private String sslKeystorePassword;
 
     /**
      * The ftp address.
      */
-    @Value("${ftp.address}")
+    @Value("#{environment.FTP_ADDRESS?:'127.0.0.1'}")
     private String serverAddress;
 
     /**
      * The ftp port.
      */
-    @Value("${ftp.port}")
+    @Value("#{environment.FTP_PORT?:21}")
     private int port;
 
     /**
