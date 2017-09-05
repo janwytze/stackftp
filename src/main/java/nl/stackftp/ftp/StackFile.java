@@ -298,9 +298,9 @@ public class StackFile implements FtpFile {
 
         // Do the HTTP call in a thread so the application can read and write asynchronously.
         new Thread(() -> {
-                WebdavClient webdavClient = stackUser.getWebdavClient();
+            WebdavClient webdavClient = stackUser.getWebdavClient();
 
-                webdavClient.put(path, inputStream);
+            webdavClient.put(path, inputStream);
         }).start();
 
         return outputStream;
