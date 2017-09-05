@@ -26,7 +26,7 @@ public class StackFtpServer {
     /**
      * Is ssl enabled.
      */
-    @Value("#{environment.FTP_SSL}")
+    @Value("#{environment.FTP_SSL?:false}")
     private boolean enableSsl;
 
     /**
@@ -44,13 +44,13 @@ public class StackFtpServer {
     /**
      * The ftp address.
      */
-    @Value("#{environment.FTP_ADDRESS}")
+    @Value("#{environment.FTP_ADDRESS?:'127.0.0.1'}")
     private String serverAddress;
 
     /**
      * The ftp port.
      */
-    @Value("#{environment.FTP_PORT}")
+    @Value("#{environment.FTP_PORT?:21}")
     private int port;
 
     /**
