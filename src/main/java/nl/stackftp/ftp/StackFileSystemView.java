@@ -95,7 +95,7 @@ public class StackFileSystemView implements FileSystemView {
      */
     public boolean isRandomAccessible() throws FtpException
     {
-        return true;
+        return false;
     }
 
     /**
