@@ -2,7 +2,6 @@ package nl.stackftp.webdav;
 
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
-import com.github.sardine.SardineFactory;
 import nl.stackftp.ftp.StackFile;
 import nl.stackftp.ftp.StackUser;
 
