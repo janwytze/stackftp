@@ -8,7 +8,6 @@ import nl.stackftp.ftp.StackUser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +74,7 @@ public class WebdavClient {
      * @throws IOException Thrown when exists failed.
      */
     public boolean exists(String path) throws IOException {
-        return this.sardine.exists(this.getUrl() + this.formatPath(path));
+        return this.sardine.exists(this.getUrl() + this.encodePath(path));
     }
 
     /**
@@ -86,13 +85,17 @@ public class WebdavClient {
      */
     public List<StackFile> list(String path) {
         try {
-            List<DavResource> davResources = this.sardine.list(this.getUrl() + this.formatPath(path));
+            List<DavResource> davResources = this.sardine.list(this.getUrl() + this.encodePath(path));
             List<StackFile> fileList = new ArrayList<>();
 
             // Skip first.
             for (int resourceIndex = 1; resourceIndex < davResources.size(); resourceIndex++) {
                 DavResource davResource = davResources.get(resourceIndex);
-                fileList.add(new StackFile(davResource.getPath().substring(18),
+                String filePath = davResource.getPath().substring(18);
+                if (davResource.getPath().endsWith("/")) {
+                    filePath = filePath.substring(0, filePath.length() - 1);
+                }
+                fileList.add(new StackFile(filePath,
                         this.getStackUser(),
                         davResource.getContentLength(),
                         davResource.getModified().getTime()
@@ -112,7 +115,7 @@ public class WebdavClient {
      * @throws IOException Thrown when delete failed.
      */
     public void delete(String path) throws IOException {
-        this.sardine.delete(this.getUrl() + this.formatPath(path));
+        this.sardine.delete(this.getUrl() + this.encodePath(path));
     }
 
     /**
@@ -123,7 +126,7 @@ public class WebdavClient {
      * @throws IOException Thrown when getting file failed.
      */
     public InputStream get(String path) throws IOException {
-        return this.sardine.get(this.getUrl() + this.formatPath(path));
+        return this.sardine.get(this.getUrl() + this.encodePath(path));
     }
 
     /**
@@ -131,10 +134,10 @@ public class WebdavClient {
      *
      * @param fromPath From path.
      * @param toPath To path.
-     * @throws IOException Thown when move failed.
+     * @throws IOException Thrown when move failed.
      */
     public void move(String fromPath, String toPath) throws IOException {
-        this.sardine.move(this.getUrl() + this.formatPath(fromPath), this.getUrl() + this.formatPath(toPath));
+        this.sardine.move(this.getUrl() + this.encodePath(fromPath), this.getUrl() + this.encodePath(toPath));
     }
 
     /**
@@ -144,18 +147,18 @@ public class WebdavClient {
      * @throws IOException Thrown making directory failed.
      */
     public void mkdir(String path) throws IOException {
-        this.sardine.createDirectory(this.getUrl() + this.formatPath(path));
+        this.sardine.createDirectory(this.getUrl() + this.encodePath(path));
     }
 
     /**
-     * Upload a file by byte array.
+     * Upload a file by piped input stream.
      *
      * @param path The file name.
      * @param inputStream The file to upload.
      * @throws IOException Thrown when put failed.
      */
     public void put(String path, PipedInputStream inputStream) throws IOException {
-        this.sardine.put(this.getUrl() + this.formatPath(path), inputStream);
+        this.sardine.put(this.getUrl() + this.encodePath(path), inputStream);
     }
 
     /**
@@ -166,41 +169,42 @@ public class WebdavClient {
      * @throws IOException Thrown on Webdav exception.
      */
     public boolean isDirectory(String path) throws IOException {
-        if (path.endsWith("/")) {
-            return true;
-        }
-
-        String parentPath = this.getParentPath(path);
-
-        List<DavResource> davResources = this.sardine.list(this.getUrl() + this.formatPath(parentPath));
-        for (int resourceIndex = 1; resourceIndex < davResources.size(); resourceIndex++) {
+        List<DavResource> davResources = this.sardine.list(this.getUrl() + this.encodePath(path));
+        for (int resourceIndex = 0; resourceIndex < davResources.size(); resourceIndex++) {
             DavResource davResource = davResources.get(resourceIndex);
 
-            if (davResource.getPath().substring(18).equals(path)) {
-                return false;
+            if (davResource.getPath().substring(18, davResource.getPath().length() - 1).equals(this.formatPath(path))
+                    && davResource.isDirectory()) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
      * Format the path.
      *
-     * @param path The path.
+     * @param path The path to format.
      * @return Formatted path.
      */
     protected String formatPath(String path) {
-        return path.replace(" ", "%20");
+        if (path.equals("/")) {
+            return "";
+        }
+
+        return path;
     }
 
     /**
-     * Get the parent path of a path.
+     * Encode the path.
      *
-     * @param path The path to get the parent path from.
-     * @return The parent absolute path.
+     * @param path The path to encode.
+     * @return Encoded path.
      */
-    protected String getParentPath(String path) {
-        return Paths.get(path).getParent().toString();
+    protected String encodePath(String path) {
+        path = this.formatPath(path);
+
+        return path.replace(" ", "%20");
     }
 }

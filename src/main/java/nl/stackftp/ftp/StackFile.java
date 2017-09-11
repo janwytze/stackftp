@@ -1,5 +1,6 @@
 package nl.stackftp.ftp;
 
+import com.github.sardine.impl.SardineException;
 import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.FtpFile;
 
@@ -28,7 +29,7 @@ public class StackFile implements FtpFile {
     /**
      * Is the file a directory.
      */
-    protected boolean isDirectory;
+    protected Boolean isDirectory;
 
     /**
      * Size of the file.
@@ -51,8 +52,15 @@ public class StackFile implements FtpFile {
 
         this.stackUser = stackUser;
         this.path = path;
-        this.exists = webdavClient.exists(this.path);
-        this.isDirectory = webdavClient.isDirectory(this.path);
+        try {
+            this.isDirectory = webdavClient.isDirectory(this.path);
+            this.exists = true;
+        } catch (SardineException ex) {
+            if (ex.getStatusCode() != 404) {
+                throw ex;
+            }
+            this.exists = false;
+        }
     }
 
     /**
@@ -121,7 +129,7 @@ public class StackFile implements FtpFile {
      * @return True when directory.
      */
     public boolean isDirectory() {
-        return this.isDirectory;
+        return this.isDirectory != null && this.isDirectory;
     }
 
     /**
@@ -130,7 +138,7 @@ public class StackFile implements FtpFile {
      * @return True when file.
      */
     public boolean isFile() {
-        return !this.isDirectory;
+        return this.isDirectory != null && !this.isDirectory;
     }
 
     /**
