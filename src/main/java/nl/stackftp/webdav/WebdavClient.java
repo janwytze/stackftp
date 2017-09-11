@@ -92,9 +92,6 @@ public class WebdavClient {
             for (int resourceIndex = 1; resourceIndex < davResources.size(); resourceIndex++) {
                 DavResource davResource = davResources.get(resourceIndex);
                 String filePath = davResource.getPath().substring(18);
-                if (davResource.getPath().endsWith("/")) {
-                    filePath = filePath.substring(0, filePath.length() - 1);
-                }
                 fileList.add(new StackFile(filePath,
                         this.getStackUser(),
                         davResource.getContentLength(),
@@ -170,32 +167,9 @@ public class WebdavClient {
      */
     public boolean isDirectory(String path) throws IOException {
         List<DavResource> davResources = this.sardine.list(this.getUrl() + this.encodePath(path));
-        for (int resourceIndex = 0; resourceIndex < davResources.size(); resourceIndex++) {
-            DavResource davResource = davResources.get(resourceIndex);
 
-            if (davResource.getPath().substring(18, davResource.getPath().length() - 1).equals(this.formatPath(path))
-                    && davResource.isDirectory()) {
-                return true;
-            }
-        }
-
-        return false;
+        return davResources.get(0).isDirectory();
     }
-
-    /**
-     * Format the path.
-     *
-     * @param path The path to format.
-     * @return Formatted path.
-     */
-    protected String formatPath(String path) {
-        if (path.equals("/")) {
-            return "";
-        }
-
-        return path;
-    }
-
     /**
      * Encode the path.
      *
@@ -203,8 +177,6 @@ public class WebdavClient {
      * @return Encoded path.
      */
     protected String encodePath(String path) {
-        path = this.formatPath(path);
-
         return path.replace(" ", "%20");
     }
 }
