@@ -25,8 +25,7 @@ public class StackFileSystemView implements FileSystemView {
      *
      * @param stackUser The user.
      */
-    public StackFileSystemView(StackUser stackUser)
-    {
+    public StackFileSystemView(StackUser stackUser) {
         this.stackUser = stackUser;
         this.workingDirectory = "/";
     }
@@ -37,8 +36,7 @@ public class StackFileSystemView implements FileSystemView {
      *
      * @return The home directory.
      */
-    public FtpFile getHomeDirectory() throws FtpException
-    {
+    public FtpFile getHomeDirectory() throws FtpException {
         return new StackFile("/", this.stackUser);
     }
 
@@ -47,8 +45,7 @@ public class StackFileSystemView implements FileSystemView {
      *
      * @return The current working directory.
      */
-    public FtpFile getWorkingDirectory() throws FtpException
-    {
+    public FtpFile getWorkingDirectory() throws FtpException {
         return new StackFile(this.workingDirectory, this.stackUser);
     }
 
@@ -59,8 +56,7 @@ public class StackFileSystemView implements FileSystemView {
      * @param directory The directory to change to.
      * @return True when change is possible.
      */
-    public boolean changeWorkingDirectory(String directory) throws FtpException
-    {
+    public boolean changeWorkingDirectory(String directory) throws FtpException {
         directory = this.formatDirectory(directory);
 
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
@@ -81,8 +77,7 @@ public class StackFileSystemView implements FileSystemView {
      * @return The file.
      * @throws FtpException Thrown when getting file failed.
      */
-    public FtpFile getFile(String path) throws FtpException
-    {
+    public FtpFile getFile(String path) throws FtpException {
         path = this.formatFile(path);
 
         return new StackFile(path, this.stackUser);
@@ -93,16 +88,15 @@ public class StackFileSystemView implements FileSystemView {
      *
      * @return True when random accessible.
      */
-    public boolean isRandomAccessible() throws FtpException
-    {
+    public boolean isRandomAccessible() throws FtpException {
         return false;
     }
 
     /**
      * Dispose FileSystemView.
      */
-    public void dispose()
-    { }
+    public void dispose() {
+    }
 
     /**
      * Format a file string.
@@ -110,8 +104,7 @@ public class StackFileSystemView implements FileSystemView {
      * @param path The path to format.
      * @return A valid file string.
      */
-    protected String formatFile(String path)
-    {
+    protected String formatFile(String path) {
         boolean isDirectory = path.endsWith("/");
 
         // If not an absolute path add the working directory.
@@ -138,8 +131,7 @@ public class StackFileSystemView implements FileSystemView {
      * @param path The path to format.
      * @return A valid directory string.
      */
-    protected String formatDirectory(String path)
-    {
+    protected String formatDirectory(String path) {
         path = this.formatFile(path);
 
         if (!path.endsWith("/")) {

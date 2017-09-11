@@ -41,8 +41,7 @@ public class StackUser implements User {
      * @param name The user name. Also contains url.
      * @param password The user's password.
      */
-    public StackUser(String name, String password)
-    {
+    public StackUser(String name, String password) {
         int separatorIndex = name.lastIndexOf('@');
 
         this.name = name.substring(0, separatorIndex);
@@ -56,8 +55,7 @@ public class StackUser implements User {
      *
      * @return The user's Webdav url.
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return this.url;
     }
 
@@ -66,8 +64,7 @@ public class StackUser implements User {
      *
      * @return The user's name.
      */
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
@@ -76,8 +73,7 @@ public class StackUser implements User {
      *
      * @return The user's password.
      */
-    public String getPassword()
-    {
+    public String getPassword() {
         return this.password;
     }
 
@@ -86,8 +82,7 @@ public class StackUser implements User {
      *
      * @return List of authorities.
      */
-    public List<? extends Authority> getAuthorities()
-    {
+    public List<? extends Authority> getAuthorities() {
         return new ArrayList<>();
     }
 
@@ -97,8 +92,7 @@ public class StackUser implements User {
      * @param authority The authority.
      * @return List of authorities.
      */
-    public List<? extends Authority> getAuthorities(Class<? extends Authority> authority)
-    {
+    public List<? extends Authority> getAuthorities(Class<? extends Authority> authority) {
         return new ArrayList<>();
     }
 
@@ -108,8 +102,7 @@ public class StackUser implements User {
      * @param authorizationRequest The authorizationRequest.
      * @return Return the authorizationRequest to let the user pass.
      */
-    public AuthorizationRequest authorize(AuthorizationRequest authorizationRequest)
-    {
+    public AuthorizationRequest authorize(AuthorizationRequest authorizationRequest) {
         return authorizationRequest;
     }
 
@@ -118,8 +111,7 @@ public class StackUser implements User {
      *
      * @return The max idle time is seconds.
      */
-    public int getMaxIdleTime()
-    {
+    public int getMaxIdleTime() {
         return this.maxIdleTime;
     }
 
@@ -129,8 +121,7 @@ public class StackUser implements User {
      *
      * @return True when enabled.
      */
-    public boolean getEnabled()
-    {
+    public boolean getEnabled() {
         return true;
     }
 
@@ -140,8 +131,7 @@ public class StackUser implements User {
      *
      * @return The home directory.
      */
-    public String getHomeDirectory()
-    {
+    public String getHomeDirectory() {
         return "/";
     }
 
@@ -150,8 +140,7 @@ public class StackUser implements User {
      *
      * @return The FileSystemView of this user.
      */
-    public FileSystemView getFileSystemView()
-    {
+    public FileSystemView getFileSystemView() {
         return new StackFileSystemView(this);
     }
 
@@ -160,8 +149,7 @@ public class StackUser implements User {
      *
      * @return The Webdav client.
      */
-    public WebdavClient getWebdavClient()
-    {
+    public WebdavClient getWebdavClient() {
         return this.webdavClient;
     }
 }

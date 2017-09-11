@@ -3,9 +3,6 @@ package nl.stackftp.configuration;
 import nl.stackftp.ftp.StackFileSystemFactory;
 import nl.stackftp.ftp.StackUser;
 import nl.stackftp.ftp.StackUserManager;
-import nl.stackftp.ftp.UserService;
-import org.apache.ftpserver.ftplet.FtpException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -19,8 +16,7 @@ public class AppConfiguration {
      * @return A StackUserManager bean.
      */
     @Bean
-    public StackUserManager stackUserManager()
-    {
+    public StackUserManager stackUserManager() {
         return new StackUserManager();
     }
 
@@ -30,8 +26,7 @@ public class AppConfiguration {
      * @return A stackFileSystemFactory bean.
      */
     @Bean
-    public StackFileSystemFactory stackFileSystemFactory()
-    {
+    public StackFileSystemFactory stackFileSystemFactory() {
         return new StackFileSystemFactory();
     }
 
@@ -44,8 +39,7 @@ public class AppConfiguration {
      */
     @Bean
     @Scope("prototype")
-    public StackUser stackUser(String username, String password)
-    {
+    public StackUser stackUser(String username, String password) {
         return new StackUser(username, password);
     }
 }

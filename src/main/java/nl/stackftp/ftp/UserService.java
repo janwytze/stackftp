@@ -30,8 +30,7 @@ public class UserService {
      * @return The StackUser object.
      * @throws FtpException Thrown when authenticating failed.
      */
-    public StackUser authenticate(String username, String password) throws FtpException
-    {
+    public StackUser authenticate(String username, String password) throws FtpException {
         if (!this.checkName(username)) {
             throw new FtpException("Name not correct");
         }
@@ -65,8 +64,7 @@ public class UserService {
      * @param stackUser The user to check.
      * @throws FtpException Thrown when the credentials are incorrect.
      */
-    protected void authenticateUser(StackUser stackUser) throws FtpException
-    {
+    protected void authenticateUser(StackUser stackUser) throws FtpException {
         if (!stackUser.getWebdavClient().authenticate()) {
             throw new FtpException("Username or password wrong");
         }
@@ -79,8 +77,7 @@ public class UserService {
      * @param name The login name.
      * @return True when valid.
      */
-    protected boolean checkName(String name)
-    {
+    protected boolean checkName(String name) {
         int separatorIndex = name.lastIndexOf('@');
 
         return separatorIndex != -1 // It must contain the separator character.

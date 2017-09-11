@@ -15,8 +15,7 @@ public final class SardineFactory {
      * @param password The password.
      * @return The Sardine instance.
      */
-    public static Sardine begin(String username, String password)
-    {
+    public static Sardine begin(String username, String password) {
         Sardine sardine = new SardineImpl(
                 HttpClients.custom()
                         .setUserAgent("StackFtp")
