@@ -8,6 +8,7 @@ import nl.stackftp.ftp.StackUser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,11 @@ public class WebdavClient {
      * @return True when correct.
      */
     public boolean authenticate() {
-        return this.exists("/");
+        try {
+            return this.exists("/");
+        } catch (IOException ex) {
+            return false;
+        }
     }
 
     /**
@@ -67,13 +72,10 @@ public class WebdavClient {
      *
      * @param path The path to check. Must be absolute.
      * @return True when exists.
+     * @throws IOException Thrown when exists failed.
      */
-    public boolean exists(String path) {
-        try {
-            return this.sardine.exists(this.getUrl() + this.formatPath(path));
-        } catch (IOException ex) {
-            return false;
-        }
+    public boolean exists(String path) throws IOException {
+        return this.sardine.exists(this.getUrl() + this.formatPath(path));
     }
 
     /**
@@ -107,16 +109,10 @@ public class WebdavClient {
      * Delete a file or directory.
      *
      * @param path The path to delete.
-     * @return True when successful.
+     * @throws IOException Thrown when delete failed.
      */
-    public boolean delete(String path) {
-        try {
-            this.sardine.delete(this.getUrl() + this.formatPath(path));
-        } catch (IOException ex) {
-            return false;
-        }
-
-        return true;
+    public void delete(String path) throws IOException {
+        this.sardine.delete(this.getUrl() + this.formatPath(path));
     }
 
     /**
@@ -135,32 +131,20 @@ public class WebdavClient {
      *
      * @param fromPath From path.
      * @param toPath To path.
-     * @return True when successful.
+     * @throws IOException Thown when move failed.
      */
-    public boolean move(String fromPath, String toPath) {
-        try {
-            this.sardine.move(this.getUrl() + this.formatPath(fromPath), this.getUrl() + this.formatPath(toPath));
-        } catch (IOException ex) {
-            return false;
-        }
-
-        return true;
+    public void move(String fromPath, String toPath) throws IOException {
+        this.sardine.move(this.getUrl() + this.formatPath(fromPath), this.getUrl() + this.formatPath(toPath));
     }
 
     /**
      * Create a directory.
      *
      * @param path The path.
-     * @return True when successful.
+     * @throws IOException Thrown making directory failed.
      */
-    public boolean mkdir(String path) {
-        try {
-            this.sardine.createDirectory(this.getUrl() + this.formatPath(path));
-        } catch (IOException ex) {
-            return false;
-        }
-
-        return true;
+    public void mkdir(String path) throws IOException {
+        this.sardine.createDirectory(this.getUrl() + this.formatPath(path));
     }
 
     /**
@@ -168,13 +152,33 @@ public class WebdavClient {
      *
      * @param path The file name.
      * @param inputStream The file to upload.
-     * @return True when successful.
+     * @throws IOException Thrown when put failed.
      */
-    public boolean put(String path, PipedInputStream inputStream) {
-        try {
-            this.sardine.put(this.getUrl() + this.formatPath(path), inputStream);
-        } catch (IOException ex) {
-            return false;
+    public void put(String path, PipedInputStream inputStream) throws IOException {
+        this.sardine.put(this.getUrl() + this.formatPath(path), inputStream);
+    }
+
+    /**
+     * Check if an absolute path is a directory.
+     *
+     * @param path The absolute path to check.
+     * @return True when directory.
+     * @throws IOException Thrown on Webdav exception.
+     */
+    public boolean isDirectory(String path) throws IOException {
+        if (path.endsWith("/")) {
+            return true;
+        }
+
+        String parentPath = this.getParentPath(path);
+
+        List<DavResource> davResources = this.sardine.list(this.getUrl() + this.formatPath(parentPath));
+        for (int resourceIndex = 1; resourceIndex < davResources.size(); resourceIndex++) {
+            DavResource davResource = davResources.get(resourceIndex);
+
+            if (davResource.getPath().substring(18).equals(path)) {
+                return false;
+            }
         }
 
         return true;
@@ -188,5 +192,15 @@ public class WebdavClient {
      */
     protected String formatPath(String path) {
         return path.replace(" ", "%20");
+    }
+
+    /**
+     * Get the parent path of a path.
+     *
+     * @param path The path to get the parent path from.
+     * @return The parent absolute path.
+     */
+    protected String getParentPath(String path) {
+        return Paths.get(path).getParent().toString();
     }
 }

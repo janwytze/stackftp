@@ -5,6 +5,7 @@ import org.apache.ftpserver.ftplet.FileSystemView;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.FtpFile;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 
 public class StackFileSystemView implements FileSystemView {
@@ -37,7 +38,11 @@ public class StackFileSystemView implements FileSystemView {
      * @return The home directory.
      */
     public FtpFile getHomeDirectory() throws FtpException {
-        return new StackFile("/", this.stackUser);
+        try {
+            return new StackFile("/", this.stackUser);
+        } catch (IOException ex) {
+            throw new FtpException("Could not get home directory");
+        }
     }
 
     /**
@@ -46,7 +51,11 @@ public class StackFileSystemView implements FileSystemView {
      * @return The current working directory.
      */
     public FtpFile getWorkingDirectory() throws FtpException {
-        return new StackFile(this.workingDirectory, this.stackUser);
+        try {
+            return new StackFile(this.workingDirectory, this.stackUser);
+        } catch (IOException ex) {
+            throw new FtpException("Could not get working directory");
+        }
     }
 
     /**
@@ -58,10 +67,13 @@ public class StackFileSystemView implements FileSystemView {
      */
     public boolean changeWorkingDirectory(String directory) throws FtpException {
         directory = this.formatDirectory(directory);
-
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
-        if (!webdavClient.exists(directory)) {
+        try {
+            if (!webdavClient.exists(directory)) {
+                return false;
+            }
+        } catch (IOException ex) {
             return false;
         }
 
@@ -80,7 +92,11 @@ public class StackFileSystemView implements FileSystemView {
     public FtpFile getFile(String path) throws FtpException {
         path = this.formatFile(path);
 
-        return new StackFile(path, this.stackUser);
+        try {
+            return new StackFile(path, this.stackUser);
+        } catch (IOException ex) {
+            throw new FtpException("Could not get file");
+        }
     }
 
     /**
