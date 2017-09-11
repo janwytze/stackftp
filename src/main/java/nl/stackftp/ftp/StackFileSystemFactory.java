@@ -14,8 +14,7 @@ public class StackFileSystemFactory implements FileSystemFactory{
      * @return The FileSystemView.
      * @throws FtpException Thrown of ftp error.
      */
-    public FileSystemView createFileSystemView(User user) throws FtpException
-    {
+    public FileSystemView createFileSystemView(User user) throws FtpException {
         StackUser stackUser = (StackUser) user;
 
         return stackUser.getFileSystemView();

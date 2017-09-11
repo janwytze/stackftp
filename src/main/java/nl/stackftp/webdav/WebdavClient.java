@@ -28,8 +28,7 @@ public class WebdavClient {
      *
      * @param stackUser The StackUser.
      */
-    public WebdavClient(StackUser stackUser)
-    {
+    public WebdavClient(StackUser stackUser) {
         this.stackUser = stackUser;
 
         // Create client with username and password.
@@ -41,8 +40,7 @@ public class WebdavClient {
      *
      * @return The url.
      */
-    protected String getUrl()
-    {
+    protected String getUrl() {
         return String.format("https://%s/remote.php/webdav", this.stackUser.getUrl());
     }
 
@@ -51,8 +49,7 @@ public class WebdavClient {
      *
      * @return The user.
      */
-    protected StackUser getStackUser()
-    {
+    protected StackUser getStackUser() {
         return this.stackUser;
     }
 
@@ -61,8 +58,7 @@ public class WebdavClient {
      *
      * @return True when correct.
      */
-    public boolean authenticate()
-    {
+    public boolean authenticate() {
         return this.exists("/");
     }
 
@@ -72,8 +68,7 @@ public class WebdavClient {
      * @param path The path to check. Must be absolute.
      * @return True when exists.
      */
-    public boolean exists(String path)
-    {
+    public boolean exists(String path) {
         try {
             return this.sardine.exists(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
@@ -87,8 +82,7 @@ public class WebdavClient {
      * @param path The path to get. Must be absolute.
      * @return List of files.
      */
-    public List<StackFile> list(String path)
-    {
+    public List<StackFile> list(String path) {
         try {
             List<DavResource> davResources = this.sardine.list(this.getUrl() + this.formatPath(path));
             List<StackFile> fileList = new ArrayList<>();
@@ -115,8 +109,7 @@ public class WebdavClient {
      * @param path The path to delete.
      * @return True when successful.
      */
-    public boolean delete(String path)
-    {
+    public boolean delete(String path) {
         try {
             this.sardine.delete(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
@@ -133,8 +126,7 @@ public class WebdavClient {
      * @return The file input stream.
      * @throws IOException Thrown when getting file failed.
      */
-    public InputStream get(String path) throws IOException
-    {
+    public InputStream get(String path) throws IOException {
         return this.sardine.get(this.getUrl() + this.formatPath(path));
     }
 
@@ -145,8 +137,7 @@ public class WebdavClient {
      * @param toPath To path.
      * @return True when successful.
      */
-    public boolean move(String fromPath, String toPath)
-    {
+    public boolean move(String fromPath, String toPath) {
         try {
             this.sardine.move(this.getUrl() + this.formatPath(fromPath), this.getUrl() + this.formatPath(toPath));
         } catch (IOException ex) {
@@ -162,8 +153,7 @@ public class WebdavClient {
      * @param path The path.
      * @return True when successful.
      */
-    public boolean mkdir(String path)
-    {
+    public boolean mkdir(String path) {
         try {
             this.sardine.createDirectory(this.getUrl() + this.formatPath(path));
         } catch (IOException ex) {
@@ -180,8 +170,7 @@ public class WebdavClient {
      * @param inputStream The file to upload.
      * @return True when successful.
      */
-    public boolean put(String path, PipedInputStream inputStream)
-    {
+    public boolean put(String path, PipedInputStream inputStream) {
         try {
             this.sardine.put(this.getUrl() + this.formatPath(path), inputStream);
         } catch (IOException ex) {
@@ -197,8 +186,7 @@ public class WebdavClient {
      * @param path The path.
      * @return Formatted path.
      */
-    protected String formatPath(String path)
-    {
+    protected String formatPath(String path) {
         return path.replace(" ", "%20");
     }
 }

@@ -18,8 +18,7 @@ public class StackUserManager implements UserManager {
      * @param name The user name.
      * @return Always null because there are no real users.
      */
-    public User getUserByName(String name) throws FtpException
-    {
+    public User getUserByName(String name) throws FtpException {
         return null;
     }
 
@@ -28,8 +27,7 @@ public class StackUserManager implements UserManager {
      *
      * @throws FtpException Always thrown because there are no real users.
      */
-    public String[] getAllUserNames() throws FtpException
-    {
+    public String[] getAllUserNames() throws FtpException {
         throw new FtpException("No ftp users");
     }
 
@@ -39,8 +37,7 @@ public class StackUserManager implements UserManager {
      * @param name The user name
      * @throws FtpException Always thrown because there are no real users.
      */
-    public void delete(String name) throws FtpException
-    {
+    public void delete(String name) throws FtpException {
         throw new FtpException("Can't delete user");
     }
 
@@ -50,8 +47,7 @@ public class StackUserManager implements UserManager {
      * @param name The user name.
      * @throws FtpException Always thrown because there are no real users.
      */
-    public void save(User name) throws FtpException
-    {
+    public void save(User name) throws FtpException {
         throw new FtpException("Can't save user");
     }
 
@@ -62,8 +58,7 @@ public class StackUserManager implements UserManager {
      * @param name The user name.
      * @return Always true.
      */
-    public boolean doesExist(String name) throws FtpException
-    {
+    public boolean doesExist(String name) throws FtpException {
         return true;
     }
 
@@ -74,8 +69,7 @@ public class StackUserManager implements UserManager {
      * @return The user when credentials are correct.
      * @throws AuthenticationFailedException Thrown when credentials are wrong or Webdav server connection failed.
      */
-    public User authenticate(Authentication authentication) throws AuthenticationFailedException
-    {
+    public User authenticate(Authentication authentication) throws AuthenticationFailedException {
         StackUser user;
 
         try {
@@ -96,8 +90,7 @@ public class StackUserManager implements UserManager {
      *
      * @throws FtpException Always thrown because there is no admin.
      */
-    public String getAdminName() throws FtpException
-    {
+    public String getAdminName() throws FtpException {
         throw new FtpException("No server admin");
     }
 
@@ -108,8 +101,7 @@ public class StackUserManager implements UserManager {
      * @return True when admin.
      * @throws FtpException Thrown on error.
      */
-    public boolean isAdmin(String name) throws FtpException
-    {
+    public boolean isAdmin(String name) throws FtpException {
         return false;
     }
 }

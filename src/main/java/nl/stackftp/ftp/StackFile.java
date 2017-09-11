@@ -41,8 +41,7 @@ public class StackFile implements FtpFile {
      * @param path The file path. Must be absolute!
      * @param stackUser The file user.
      */
-    public StackFile(String path, StackUser stackUser)
-    {
+    public StackFile(String path, StackUser stackUser) {
         WebdavClient webdavClient = stackUser.getWebdavClient();
 
         this.stackUser = stackUser;
@@ -57,8 +56,7 @@ public class StackFile implements FtpFile {
      * @param stackUser The file user.
      * @param size The file size.
      */
-    public StackFile(String path, StackUser stackUser, long size)
-    {
+    public StackFile(String path, StackUser stackUser, long size) {
         this(path, stackUser);
 
         // To prevent directories not appearing set the minimum size to 0.
@@ -73,8 +71,7 @@ public class StackFile implements FtpFile {
      * @param size The file size.
      * @param lastModified The last modified date.
      */
-    public StackFile(String path, StackUser stackUser, long size, long lastModified)
-    {
+    public StackFile(String path, StackUser stackUser, long size, long lastModified) {
         this(path, stackUser, size);
         this.lastModified = lastModified;
     }
@@ -324,8 +321,7 @@ public class StackFile implements FtpFile {
      *
      * @return The user.
      */
-    public StackUser getStackUser()
-    {
+    public StackUser getStackUser() {
         return this.stackUser;
     }
 }

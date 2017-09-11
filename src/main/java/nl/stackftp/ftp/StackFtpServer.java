@@ -59,8 +59,7 @@ public class StackFtpServer {
      * @throws FtpException Thrown when server can't start.
      */
     @PostConstruct
-    public void init() throws FtpException
-    {
+    public void init() throws FtpException {
         FtpServerFactory serverFactory = new FtpServerFactory();
         ListenerFactory listenerFactory = new ListenerFactory();
 
@@ -87,8 +86,7 @@ public class StackFtpServer {
      *
      * @return The SslConfiguration
      */
-    protected SslConfiguration getSslConfiguration()
-    {
+    protected SslConfiguration getSslConfiguration() {
         SslConfigurationFactory sslConfigurationFactory = new SslConfigurationFactory();
         sslConfigurationFactory.setKeystoreFile(new File(this.sslKeystore));
         sslConfigurationFactory.setKeystorePassword(this.sslKeystorePassword);
