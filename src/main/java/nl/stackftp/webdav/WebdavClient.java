@@ -166,7 +166,7 @@ public class WebdavClient {
      * @throws IOException Thrown on Webdav exception.
      */
     public boolean isDirectory(String path) throws IOException {
-        List<DavResource> davResources = this.sardine.list(this.getUrl() + this.encodePath(path));
+        List<DavResource> davResources = this.sardine.list(this.getUrl() + this.encodePath(path), 0);
 
         return davResources.get(0).isDirectory();
     }
