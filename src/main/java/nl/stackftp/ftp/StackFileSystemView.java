@@ -5,6 +5,7 @@ import org.apache.ftpserver.ftplet.FileSystemView;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.FtpFile;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 
 public class StackFileSystemView implements FileSystemView {
@@ -37,7 +38,11 @@ public class StackFileSystemView implements FileSystemView {
      * @return The home directory.
      */
     public FtpFile getHomeDirectory() throws FtpException {
-        return new StackFile("/", this.stackUser);
+        try {
+            return new StackFile("/", this.stackUser);
+        } catch (IOException ex) {
+            throw new FtpException("Could not get home directory");
+        }
     }
 
     /**
@@ -46,7 +51,11 @@ public class StackFileSystemView implements FileSystemView {
      * @return The current working directory.
      */
     public FtpFile getWorkingDirectory() throws FtpException {
-        return new StackFile(this.workingDirectory, this.stackUser);
+        try {
+            return new StackFile(this.workingDirectory, this.stackUser);
+        } catch (IOException ex) {
+            throw new FtpException("Could not get working directory");
+        }
     }
 
     /**
@@ -57,11 +66,14 @@ public class StackFileSystemView implements FileSystemView {
      * @return True when change is possible.
      */
     public boolean changeWorkingDirectory(String directory) throws FtpException {
-        directory = this.formatDirectory(directory);
-
+        directory = this.formatFile(directory);
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
-        if (!webdavClient.exists(directory)) {
+        try {
+            if (!webdavClient.exists(directory)) {
+                return false;
+            }
+        } catch (IOException ex) {
             return false;
         }
 
@@ -80,7 +92,11 @@ public class StackFileSystemView implements FileSystemView {
     public FtpFile getFile(String path) throws FtpException {
         path = this.formatFile(path);
 
-        return new StackFile(path, this.stackUser);
+        try {
+            return new StackFile(path, this.stackUser);
+        } catch (IOException ex) {
+            throw new FtpException("Could not get file");
+        }
     }
 
     /**
@@ -105,38 +121,13 @@ public class StackFileSystemView implements FileSystemView {
      * @return A valid file string.
      */
     protected String formatFile(String path) {
-        boolean isDirectory = path.endsWith("/");
-
         // If not an absolute path add the working directory.
         if (!path.startsWith("/")) {
-            path = this.workingDirectory + path;
+            path = this.workingDirectory + '/' + path;
         }
 
         // Remove Redundancies.
         path = Paths.get(path).normalize().toString();
-
-        // Re-add the / when the file is a directory.
-        // This is necessary to not confuse files with directories.
-        if (isDirectory && !path.endsWith("/")) {
-            path += '/';
-        }
-
-        return path;
-    }
-
-    /**
-     * Format a directory string.
-     * Don't execute after formatFile has been executed. This would at the working directory twice.
-     *
-     * @param path The path to format.
-     * @return A valid directory string.
-     */
-    protected String formatDirectory(String path) {
-        path = this.formatFile(path);
-
-        if (!path.endsWith("/")) {
-            path += '/';
-        }
 
         return path;
     }

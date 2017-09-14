@@ -1,5 +1,6 @@
 package nl.stackftp.ftp;
 
+import com.github.sardine.impl.SardineException;
 import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.FtpFile;
 
@@ -26,6 +27,11 @@ public class StackFile implements FtpFile {
     protected boolean exists;
 
     /**
+     * Is the file a directory.
+     */
+    protected Boolean isDirectory;
+
+    /**
      * Size of the file.
      */
     protected long size = 0;
@@ -41,12 +47,20 @@ public class StackFile implements FtpFile {
      * @param path The file path. Must be absolute!
      * @param stackUser The file user.
      */
-    public StackFile(String path, StackUser stackUser) {
+    public StackFile(String path, StackUser stackUser) throws IOException {
         WebdavClient webdavClient = stackUser.getWebdavClient();
 
         this.stackUser = stackUser;
         this.path = path;
-        this.exists = webdavClient.exists(this.path);
+        try {
+            this.isDirectory = webdavClient.isDirectory(this.path);
+            this.exists = true;
+        } catch (SardineException ex) {
+            if (ex.getStatusCode() != 404) {
+                throw ex;
+            }
+            this.exists = false;
+        }
     }
 
     /**
@@ -56,7 +70,7 @@ public class StackFile implements FtpFile {
      * @param stackUser The file user.
      * @param size The file size.
      */
-    public StackFile(String path, StackUser stackUser, long size) {
+    public StackFile(String path, StackUser stackUser, long size) throws IOException {
         this(path, stackUser);
 
         // To prevent directories not appearing set the minimum size to 0.
@@ -71,7 +85,7 @@ public class StackFile implements FtpFile {
      * @param size The file size.
      * @param lastModified The last modified date.
      */
-    public StackFile(String path, StackUser stackUser, long size, long lastModified) {
+    public StackFile(String path, StackUser stackUser, long size, long lastModified) throws IOException {
         this(path, stackUser, size);
         this.lastModified = lastModified;
     }
@@ -115,8 +129,7 @@ public class StackFile implements FtpFile {
      * @return True when directory.
      */
     public boolean isDirectory() {
-        // If the path ends with / it is a directory.
-        return this.path.endsWith("/");
+        return this.isDirectory != null && this.isDirectory;
     }
 
     /**
@@ -125,8 +138,7 @@ public class StackFile implements FtpFile {
      * @return True when file.
      */
     public boolean isFile() {
-        // If the path doesn't ends with / it is a file.
-        return !this.path.endsWith("/");
+        return this.isDirectory != null && !this.isDirectory;
     }
 
     /**
@@ -241,7 +253,13 @@ public class StackFile implements FtpFile {
     public boolean mkdir() {
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
-        return webdavClient.mkdir(this.path);
+        try {
+            webdavClient.mkdir(this.path);
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -252,7 +270,13 @@ public class StackFile implements FtpFile {
     public boolean delete() {
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
-        return webdavClient.delete(this.path);
+        try {
+            webdavClient.delete(this.path);
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -264,7 +288,13 @@ public class StackFile implements FtpFile {
     public boolean move(FtpFile ftpFile) {
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
-        return webdavClient.move(this.path, ftpFile.getAbsolutePath());
+        try {
+            webdavClient.move(this.path, ftpFile.getAbsolutePath());
+        } catch (IOException ex) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -297,7 +327,9 @@ public class StackFile implements FtpFile {
         new Thread(() -> {
             WebdavClient webdavClient = stackUser.getWebdavClient();
 
-            webdavClient.put(path, inputStream);
+            try {
+                webdavClient.put(path, inputStream);
+            } catch (IOException ex) { }
         }).start();
 
         return outputStream;
