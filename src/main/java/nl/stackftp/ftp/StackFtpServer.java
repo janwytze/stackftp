@@ -78,7 +78,15 @@ public class StackFtpServer {
 
         FtpServer ftpServer = serverFactory.createServer();
 
-        ftpServer.start();
+        Thread serverThread = new Thread(() -> {
+            try {
+                ftpServer.start();
+            } catch (FtpException exception) {
+                exception.printStackTrace();
+                System.exit(1);
+            }
+        });
+        serverThread.start();
     }
 
     /**
