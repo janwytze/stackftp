@@ -58,7 +58,6 @@ public class StackftpApplicationTests {
      * The env variables used are USERNAME and PASSWORD.
      */
     @Test
-    @Ignore
     public void ftpConnection() throws Exception {
         if (this.username == null || this.password == null) {
             throw new Exception("No username and password provided");
