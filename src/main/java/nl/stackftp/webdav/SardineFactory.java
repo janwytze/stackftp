@@ -6,7 +6,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClients;
 
-public final class SardineFactory {
+final class SardineFactory {
 
     /**
      * Create a Sardine instance.

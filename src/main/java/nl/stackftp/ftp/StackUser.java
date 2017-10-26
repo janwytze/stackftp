@@ -13,27 +13,27 @@ public class StackUser implements User {
      * The maximum idle time of this user.
      */
     @Value("#{environment.FTP_IDLE_TIME?:3600}")
-    protected int maxIdleTime;
+    private int maxIdleTime;
 
     /**
      * The Webdav url.
      */
-    protected String url;
+    private String url;
 
     /**
      * The user name.
      */
-    protected String name;
+    private String name;
 
     /**
      * The user password.
      */
-    protected String password;
+    private String password;
 
     /**
      * The user's Webdav client.
      */
-    protected WebdavClient webdavClient;
+    private WebdavClient webdavClient;
 
     /**
      * The StackUser constructor.

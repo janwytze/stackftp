@@ -13,13 +13,13 @@ public class StackFileSystemView implements FileSystemView {
     /**
      * The user of this FileSystemView.
      */
-    protected StackUser stackUser;
+    private StackUser stackUser;
 
     /**
      * The current working directory.
      * Must be absolute, so always starts with /!
      */
-    protected String workingDirectory;
+    private String workingDirectory;
 
     /**
      * The FileSystemView constructor.
@@ -120,7 +120,7 @@ public class StackFileSystemView implements FileSystemView {
      * @param path The path to format.
      * @return A valid file string.
      */
-    protected String formatFile(String path) {
+    private String formatFile(String path) {
         // If not an absolute path add the working directory.
         if (!path.startsWith("/")) {
             path = this.workingDirectory + '/' + path;

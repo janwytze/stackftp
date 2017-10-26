@@ -70,19 +70,16 @@ public class StackUserManager implements UserManager {
      * @throws AuthenticationFailedException Thrown when credentials are wrong or Webdav server connection failed.
      */
     public User authenticate(Authentication authentication) throws AuthenticationFailedException {
-        StackUser user;
-
         try {
             // Cast the object so the username and password are readable.
             UsernamePasswordAuthentication userAuthentication = (UsernamePasswordAuthentication) authentication;
-            user = this.userService.authenticate(userAuthentication.getUsername(), userAuthentication.getPassword());
+
+            return this.userService.authenticate(userAuthentication.getUsername(), userAuthentication.getPassword());
         } catch (ClassCastException ex) {
             throw new AuthenticationFailedException("Please provide a username and password");
         } catch (FtpException ex) {
             throw new AuthenticationFailedException(ex.getMessage());
         }
-
-        return user;
     }
 
     /**
