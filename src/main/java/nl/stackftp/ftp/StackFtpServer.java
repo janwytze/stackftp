@@ -66,7 +66,6 @@ public class StackFtpServer {
         // Enable ssl when configured.
         if (this.enableSsl) {
             listenerFactory.setSslConfiguration(this.getSslConfiguration());
-            listenerFactory.setImplicitSsl(true);
         }
 
         listenerFactory.setServerAddress(this.serverAddress);
