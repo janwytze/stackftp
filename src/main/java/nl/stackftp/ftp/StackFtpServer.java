@@ -30,6 +30,12 @@ public class StackFtpServer {
     private boolean enableSsl;
 
     /**
+     * Is implicit ssl enabled.
+     */
+    @Value("#{environment.FTP_IMPLICIT_SSL?:false}")
+    private boolean enableImplicitSsl;
+
+    /**
      * The ftp ssl keystore file.
      */
     @Value("#{environment.FTP_KEYSTORE}")
@@ -66,6 +72,7 @@ public class StackFtpServer {
         // Enable ssl when configured.
         if (this.enableSsl) {
             listenerFactory.setSslConfiguration(this.getSslConfiguration());
+            listenerFactory.setImplicitSsl(this.enableImplicitSsl);
         }
 
         listenerFactory.setServerAddress(this.serverAddress);
