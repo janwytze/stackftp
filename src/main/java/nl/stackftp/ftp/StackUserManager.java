@@ -1,5 +1,6 @@
 package nl.stackftp.ftp;
 
+import io.sentry.Sentry;
 import org.apache.ftpserver.ftplet.*;
 import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,7 @@ public class StackUserManager implements UserManager {
         } catch (ClassCastException ex) {
             throw new AuthenticationFailedException("Please provide a username and password");
         } catch (FtpException ex) {
+            Sentry.capture(ex);
             throw new AuthenticationFailedException(ex.getMessage());
         }
     }

@@ -1,5 +1,6 @@
 package nl.stackftp;
 
+import io.sentry.Sentry;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
@@ -14,6 +15,7 @@ import org.springframework.cache.annotation.EnableCaching;
 public class StackftpApplication {
 
 	public static void main(String[] args) {
+		Sentry.init();
 		SpringApplication.run(StackftpApplication.class, args);
 	}
 }

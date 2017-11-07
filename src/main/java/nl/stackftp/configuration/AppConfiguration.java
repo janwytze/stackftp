@@ -6,6 +6,7 @@ import nl.stackftp.ftp.StackUserManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 public class AppConfiguration {

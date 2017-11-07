@@ -2,6 +2,7 @@ package nl.stackftp.webdav;
 
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
+import io.sentry.Sentry;
 import nl.stackftp.ftp.StackFile;
 import nl.stackftp.ftp.StackUser;
 
@@ -101,6 +102,7 @@ public class WebdavClient {
 
             return fileList;
         } catch (IOException ex) {
+            Sentry.capture(ex);
             return null;
         }
     }
@@ -112,7 +114,11 @@ public class WebdavClient {
      * @throws IOException Thrown when delete failed.
      */
     public void delete(String path) throws IOException {
-        this.sardine.delete(this.getUrl() + this.encodePath(path));
+        try {
+            this.sardine.delete(this.getUrl() + this.encodePath(path));
+        } catch (IOException e) {
+            Sentry.capture(e);
+        }
     }
 
     /**
@@ -123,7 +129,12 @@ public class WebdavClient {
      * @throws IOException Thrown when getting file failed.
      */
     public InputStream get(String path) throws IOException {
-        return this.sardine.get(this.getUrl() + this.encodePath(path));
+        try {
+            return this.sardine.get(this.getUrl() + this.encodePath(path));
+        } catch (IOException e) {
+            Sentry.capture(e);
+            return null;
+        }
     }
 
     /**
@@ -134,7 +145,11 @@ public class WebdavClient {
      * @throws IOException Thrown when move failed.
      */
     public void move(String fromPath, String toPath) throws IOException {
-        this.sardine.move(this.getUrl() + this.encodePath(fromPath), this.getUrl() + this.encodePath(toPath));
+        try {
+            this.sardine.move(this.getUrl() + this.encodePath(fromPath), this.getUrl() + this.encodePath(toPath));
+        } catch (IOException e) {
+            Sentry.capture(e);
+        }
     }
 
     /**
@@ -144,7 +159,11 @@ public class WebdavClient {
      * @throws IOException Thrown making directory failed.
      */
     public void mkdir(String path) throws IOException {
-        this.sardine.createDirectory(this.getUrl() + this.encodePath(path));
+        try {
+            this.sardine.createDirectory(this.getUrl() + this.encodePath(path));
+        } catch (IOException e) {
+            Sentry.capture(e);
+        }
     }
 
     /**
@@ -155,7 +174,11 @@ public class WebdavClient {
      * @throws IOException Thrown when put failed.
      */
     public void put(String path, PipedInputStream inputStream) throws IOException {
-        this.sardine.put(this.getUrl() + this.encodePath(path), inputStream);
+        try {
+            this.sardine.put(this.getUrl() + this.encodePath(path), inputStream);
+        } catch (IOException e) {
+            Sentry.capture(e);
+        }
     }
 
     /**

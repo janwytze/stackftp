@@ -1,5 +1,6 @@
 package nl.stackftp.ftp;
 
+import io.sentry.Sentry;
 import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.FileSystemView;
 import org.apache.ftpserver.ftplet.FtpException;
@@ -41,6 +42,7 @@ public class StackFileSystemView implements FileSystemView {
         try {
             return new StackFile("/", this.stackUser);
         } catch (IOException ex) {
+            Sentry.capture(ex);
             throw new FtpException("Could not get home directory");
         }
     }
@@ -54,6 +56,7 @@ public class StackFileSystemView implements FileSystemView {
         try {
             return new StackFile(this.workingDirectory, this.stackUser);
         } catch (IOException ex) {
+            Sentry.capture(ex);
             throw new FtpException("Could not get working directory");
         }
     }
@@ -74,6 +77,7 @@ public class StackFileSystemView implements FileSystemView {
                 return false;
             }
         } catch (IOException ex) {
+            Sentry.capture(ex);
             return false;
         }
 
@@ -95,6 +99,7 @@ public class StackFileSystemView implements FileSystemView {
         try {
             return new StackFile(path, this.stackUser);
         } catch (IOException ex) {
+            Sentry.capture(ex);
             throw new FtpException("Could not get file");
         }
     }
