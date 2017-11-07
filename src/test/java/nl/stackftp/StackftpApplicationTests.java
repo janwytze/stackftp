@@ -2,7 +2,6 @@ package nl.stackftp;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.text.RandomStringGenerator;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +52,7 @@ public class StackftpApplicationTests {
 
     /**
      * Try to login on the FTP server.
-     * This test contains the @Ignore annotation because it should not be executed in production.
+     * This test should not be executed in production because it contains user credentials.
      * The credentials used must be provided with environment variables.
      * The env variables used are USERNAME and PASSWORD.
      */
