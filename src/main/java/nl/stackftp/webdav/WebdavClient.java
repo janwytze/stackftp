@@ -16,12 +16,12 @@ public class WebdavClient {
     /**
      * The user.
      */
-    protected StackUser stackUser;
+    private StackUser stackUser;
 
     /**
      * The actual webdav client.
      */
-    protected Sardine sardine;
+    private Sardine sardine;
 
     /**
      * The WebdavClient constructor.
@@ -40,7 +40,7 @@ public class WebdavClient {
      *
      * @return The url.
      */
-    protected String getUrl() {
+    private String getUrl() {
         return String.format("https://%s/remote.php/webdav", this.stackUser.getUrl());
     }
 
@@ -49,7 +49,7 @@ public class WebdavClient {
      *
      * @return The user.
      */
-    protected StackUser getStackUser() {
+    private StackUser getStackUser() {
         return this.stackUser;
     }
 
@@ -176,7 +176,7 @@ public class WebdavClient {
      * @param path The path to encode.
      * @return Encoded path.
      */
-    protected String encodePath(String path) {
+    private String encodePath(String path) {
         return path.replace(" ", "%20");
     }
 }

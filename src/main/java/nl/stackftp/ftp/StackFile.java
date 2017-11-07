@@ -13,33 +13,33 @@ public class StackFile implements FtpFile {
     /**
      * The user of this file.
      */
-    protected StackUser stackUser;
+    private StackUser stackUser;
 
     /**
      * The path of this file.
      * Must be absolute, so always starts with /!
      */
-    protected String path;
+    private String path;
 
     /**
      * Does this file exists.
      */
-    protected boolean exists;
+    private boolean exists;
 
     /**
      * Is the file a directory.
      */
-    protected Boolean isDirectory;
+    private Boolean isDirectory;
 
     /**
      * Size of the file.
      */
-    protected long size = 0;
+    private long size = 0;
 
     /**
      * The last modified date of this file.
      */
-    protected long lastModified = 0;
+    private long lastModified = 0;
 
     /**
      * The StackFile constructor.
@@ -52,6 +52,7 @@ public class StackFile implements FtpFile {
 
         this.stackUser = stackUser;
         this.path = path;
+
         try {
             this.isDirectory = webdavClient.isDirectory(this.path);
             this.exists = true;
@@ -70,7 +71,7 @@ public class StackFile implements FtpFile {
      * @param stackUser The file user.
      * @param size The file size.
      */
-    public StackFile(String path, StackUser stackUser, long size) throws IOException {
+    private StackFile(String path, StackUser stackUser, long size) throws IOException {
         this(path, stackUser);
 
         // To prevent directories not appearing set the minimum size to 0.
@@ -280,7 +281,7 @@ public class StackFile implements FtpFile {
     }
 
     /**
-     * Move a file.
+     * Move this file.
      *
      * @param ftpFile The destination file.
      * @return True when successful.

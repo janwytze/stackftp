@@ -16,6 +16,7 @@ public class AppConfiguration {
      * @return A StackUserManager bean.
      */
     @Bean
+    @Scope("prototype")
     public StackUserManager stackUserManager() {
         return new StackUserManager();
     }
@@ -26,6 +27,7 @@ public class AppConfiguration {
      * @return A stackFileSystemFactory bean.
      */
     @Bean
+    @Scope("prototype")
     public StackFileSystemFactory stackFileSystemFactory() {
         return new StackFileSystemFactory();
     }

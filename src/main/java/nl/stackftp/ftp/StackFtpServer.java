@@ -85,7 +85,7 @@ public class StackFtpServer {
      *
      * @return The SslConfiguration
      */
-    protected SslConfiguration getSslConfiguration() {
+    private SslConfiguration getSslConfiguration() {
         SslConfigurationFactory sslConfigurationFactory = new SslConfigurationFactory();
         sslConfigurationFactory.setKeystoreFile(new File(this.sslKeystore));
         sslConfigurationFactory.setKeystorePassword(this.sslKeystorePassword);
