@@ -1,5 +1,6 @@
 package nl.stackftp.ftp;
 
+import io.sentry.Sentry;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.FtpException;
@@ -77,7 +78,11 @@ public class StackFtpServer {
 
         FtpServer ftpServer = serverFactory.createServer();
 
-        ftpServer.start();
+        try {
+            ftpServer.start();
+        } catch (Exception e) {
+            Sentry.capture(e);
+        }
     }
 
     /**

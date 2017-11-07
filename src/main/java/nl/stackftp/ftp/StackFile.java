@@ -1,6 +1,7 @@
 package nl.stackftp.ftp;
 
 import com.github.sardine.impl.SardineException;
+import io.sentry.Sentry;
 import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.FtpFile;
 
@@ -58,6 +59,7 @@ public class StackFile implements FtpFile {
             this.exists = true;
         } catch (SardineException ex) {
             if (ex.getStatusCode() != 404) {
+                Sentry.capture(ex);
                 throw ex;
             }
             this.exists = false;
@@ -257,6 +259,7 @@ public class StackFile implements FtpFile {
         try {
             webdavClient.mkdir(this.path);
         } catch (IOException ex) {
+            Sentry.capture(ex);
             return false;
         }
 
@@ -274,6 +277,7 @@ public class StackFile implements FtpFile {
         try {
             webdavClient.delete(this.path);
         } catch (IOException ex) {
+            Sentry.capture(ex);
             return false;
         }
 
@@ -292,6 +296,7 @@ public class StackFile implements FtpFile {
         try {
             webdavClient.move(this.path, ftpFile.getAbsolutePath());
         } catch (IOException ex) {
+            Sentry.capture(ex);
             return false;
         }
 
@@ -307,7 +312,11 @@ public class StackFile implements FtpFile {
         if (this.isDirectory()) {
             WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
-            return webdavClient.list(this.path);
+            try {
+                return webdavClient.list(this.path);
+            } catch (Exception e) {
+                Sentry.capture(e);
+            }
         }
 
         return null;
@@ -330,7 +339,9 @@ public class StackFile implements FtpFile {
 
             try {
                 webdavClient.put(path, inputStream);
-            } catch (IOException ex) { }
+            } catch (IOException ex) {
+                Sentry.capture(ex);
+            }
         }).start();
 
         return outputStream;
@@ -344,10 +355,17 @@ public class StackFile implements FtpFile {
      * @throws IOException Thrown when getting file failed.
      */
     public InputStream createInputStream(long l) throws IOException {
+
         WebdavClient webdavClient = this.stackUser.getWebdavClient();
 
-        return webdavClient.get(this.path);
+        try {
+            return webdavClient.get(this.path);
+        } catch (IOException e) {
+            Sentry.capture(e);
+            return null;
+        }
     }
+
 
     /**
      * Get the user of this file.
