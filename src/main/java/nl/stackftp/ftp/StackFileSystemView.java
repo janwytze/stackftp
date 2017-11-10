@@ -4,6 +4,8 @@ import nl.stackftp.webdav.WebdavClient;
 import org.apache.ftpserver.ftplet.FileSystemView;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.FtpFile;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Paths;

@@ -3,7 +3,11 @@ package nl.stackftp.ftp;
 import org.apache.ftpserver.ftplet.*;
 import org.apache.ftpserver.usermanager.UsernamePasswordAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 public class StackUserManager implements UserManager {
 
     /**
