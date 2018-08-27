@@ -60,6 +60,12 @@ public class StackFtpServer {
     private int port;
 
     /**
+     * The implicit ftp port.
+     */
+    @Value("#{environment.FTP_IMPLICIT_PORT?:990}")
+    private int implicitPort;
+
+    /**
      * Start the ftp server.
      *
      * @throws FtpException Thrown when server can't start.
@@ -68,16 +74,27 @@ public class StackFtpServer {
     public void init() throws FtpException {
         FtpServerFactory serverFactory = new FtpServerFactory();
         ListenerFactory listenerFactory = new ListenerFactory();
+        ListenerFactory implicitListenerFactory = new ListenerFactory();
 
         // Enable ssl when configured.
         if (this.enableSsl) {
             listenerFactory.setSslConfiguration(this.getSslConfiguration());
-            listenerFactory.setImplicitSsl(this.enableImplicitSsl);
+            implicitListenerFactory.setSslConfiguration(this.getSslConfiguration());
+            implicitListenerFactory.setImplicitSsl(true);
         }
 
+        // Set ports and addresses.
         listenerFactory.setServerAddress(this.serverAddress);
+        implicitListenerFactory.setServerAddress(this.serverAddress);
         listenerFactory.setPort(this.port);
+        implicitListenerFactory.setPort(this.implicitPort);
+
         serverFactory.addListener("default", listenerFactory.createListener());
+
+        // Only start the implicit listener when configured.
+        if (this.enableImplicitSsl) {
+            serverFactory.addListener("implicit", implicitListenerFactory.createListener());
+        }
 
         serverFactory.setUserManager(this.applicationContext.getBean(StackUserManager.class));
         serverFactory.setFileSystem(this.applicationContext.getBean(StackFileSystemFactory.class));
