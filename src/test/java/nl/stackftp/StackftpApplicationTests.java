@@ -28,7 +28,7 @@ public class StackftpApplicationTests {
     /**
      * The ftp address.
      */
-    @Value("#{environment.FTP_ADDRESS?:'127.0.0.1'}")
+    @Value("#{environment.FTP_HOST?:'127.0.0.1'}")
     private String ftpAddress;
 
     /**

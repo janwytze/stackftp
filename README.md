@@ -1,39 +1,40 @@
-# StackFtp
+# StackFTP
 
-StackFtp is a ftp server that is linked to a stack Webdav server.  
+StackFTP is a nifty piece of software that aims to provide a simple and sleek solution to act as a translation mechanism from the FTP to the WebDAV protocol.
+
+## Naming
+StackFTP was initially named after the [Stack](https://www.transip.nl/stack/) product, as offered by the Dutch hosting company [TransIP](https://www.transip.nl/).
+TransIP has built their "Stack" based on OwnCloud, which means our software should offer full compatibility with other WebDAV implementations.
 
 ## Configuration
-StackFtp can be configured with environment variables.  
-The following environment variables are available:  
+StackFTP shall be used with the following environment configs.
 
-##### FTP_ADDRESS
-Default: `127.0.0.1`  
-The address the ftp server will run on.
+##### FTP_HOST
+You can define an IP address to bond to. By default, StackFTP will listen at `127.0.0.1`.
 
 ##### FTP_PORT
-Default: `21`  
-The port the ftp server will run on.
+Using `FTP_PORT` you can decide what port StackFTP should use to listen at. By default, it will use the standard FTP port `21`.
 
 ##### FTP_SSL
-Default: `false`  
-Does the server support SSL?
+By default StackFTP offers no SSL encrypted connection. You can, however, enable this function by setting this value to `true`.
 
 ##### FTP_KEYSTORE
 Default: **None**  
-The keystore path for SSL.
+This value represents the keystore to use when using SSL to encrypt the connection.
+** REQUIRED WHEN FTP_SSL IS ENABLED **
 
 ##### FTP_KEYSTORE_PASSWORD
 Default: **None**  
-The keystore password.
+This value represents the password that belongs to the keystore.
+** REQUIRED WHEN FTP_SSL IS ENABLED **
 
 ##### FTP_IDLE_TIME
 Default: `3600`  
-The maximum amount of seconds idle time of an user.
+How many seconds is StackFTP supposed to idle? By default we wait for 3600 seconds, equal to one hour.
 
-## Building
-Building StackFtp can be done using maven.  
-Execute the following command to build the application:
+## Building StackFTP
+You can get started using StackFTP rather easily. Just execute the following command to build this piece of software using Maven:
 ```
 mvn clean install
 ```
-This will create a `.war` file that can be executed with java.
+Maven will then generate a `.war` file, which you can execute using Java.
