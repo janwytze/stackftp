@@ -29,7 +29,7 @@ public class StackftpApplicationTests {
      * The ftp address.
      */
     @Value("#{environment.FTP_HOST?:'127.0.0.1'}")
-    private String ftpAddress;
+    private String ftpHost;
 
     /**
      * The ftp username.
@@ -65,7 +65,7 @@ public class StackftpApplicationTests {
         FTPClient ftpClient = new FTPClient();
 
         // Connect to the server.
-        ftpClient.connect(this.ftpAddress, this.ftpPort);
+        ftpClient.connect(this.ftpHost, this.ftpPort);
 
         // Login with the provided credentials.
         boolean loginSuccess = ftpClient.login(this.username, this.password);
